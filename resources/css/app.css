@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    html {
+        font-family: 'Inter', system-ui, sans-serif;
+    }
+
+    /* Smooth scrollbar */
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+        background: #F0F8A4;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #36656B;
+        border-radius: 999px;
+    }
+}
+
+@layer components {
+    /* Reusable Bento tile base */
+    .bento-tile {
+        @apply rounded-2xl p-6 transition-all duration-200;
+    }
+
+    /* Table styling konsisten */
+    .bento-table {
+        @apply w-full border-collapse;
+    }
+    .bento-table thead tr {
+        @apply bg-[#36656B] text-white;
+    }
+    .bento-table thead th {
+        @apply px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider;
+    }
+    .bento-table tbody tr {
+        @apply border-b border-[#DAD887]/30 hover:bg-[#F0F8A4]/40 transition-colors duration-100;
+    }
+    .bento-table tbody td {
+        @apply px-4 py-3 text-sm text-gray-700;
+    }
+
+    /* Badge role */
+    .badge-pengelola {
+        @apply inline-block bg-[#36656B] text-white text-xs font-semibold px-2.5 py-0.5 rounded-lg uppercase;
+    }
+    .badge-petugas {
+        @apply inline-block bg-[#75B06F] text-white text-xs font-semibold px-2.5 py-0.5 rounded-lg uppercase;
+    }
+}
