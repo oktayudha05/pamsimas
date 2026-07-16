@@ -26,7 +26,7 @@
         </main>
 
         <!-- Sticky Footer Mobile-Responsive -->
-        <footer class="w-full py-6 text-center border-t border-[#36656B]/10 bg-white/40 backdrop-blur-sm mt-auto">
+        <footer class="w-full py-2 text-center border-t border-[#36656B]/10 bg-white/40 backdrop-blur-sm mt-auto">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <p class="text-[#36656B]/70 text-xs sm:text-sm font-medium">
                     &copy; 2026 KKN UNTIDAR Desa Menggoro

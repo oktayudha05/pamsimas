@@ -48,22 +48,34 @@
                 </div>
             </div>
 
-            <div class="flex items-center gap-3">
-                <!-- Month Filter -->
-                <form method="GET" action="{{ route('rekap.index') }}" class="flex items-center">
+            <!-- Gunakan flex-wrap agar bisa turun ke bawah di HP, dan w-full agar rapi -->
+            <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+                
+                <!-- Month Filter (Full width di HP, auto di desktop) -->
+                <form method="GET" action="{{ route('rekap.index') }}" class="flex items-center w-full sm:w-auto">
                     <input type="month" name="bulan" value="{{ $bulan }}"
-                           class="px-4 py-2 bg-[#F0F8A4]/40 border border-[#DAD887] text-gray-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#36656B]"
-                           onchange="this.form.submit()">
+                        class="w-full sm:w-auto px-4 py-2 bg-[#F0F8A4]/40 border border-[#DAD887] text-gray-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#36656B]"
+                        onchange="this.form.submit()">
                 </form>
 
+                <!-- Download Excel Button -->
+                <a href="{{ route('rekap.excel', ['bulan' => $bulan]) }}"
+                    class="flex-1 sm:flex-none bg-[#75B06F] hover:bg-[#62a15c] text-white text-sm font-semibold px-4 py-2 rounded-xl flex items-center justify-center sm:justify-start gap-2 shadow-sm transition whitespace-nowrap">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                    </svg>
+                    <span>Download Excel</span>
+                </a>
+
                 <!-- Print Button -->
-                <button onclick="window.print()"
-                        class="bg-[#75B06F] hover:bg-[#62a15c] text-white text-sm font-semibold px-4 py-2 rounded-xl flex items-center gap-2 shadow-sm transition">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <!-- <button onclick="window.print()"
+                    class="flex-1 sm:flex-none bg-[#75B06F] hover:bg-[#62a15c] text-white text-sm font-semibold px-4 py-2 rounded-xl flex items-center justify-center sm:justify-start gap-2 shadow-sm transition whitespace-nowrap">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
                     </svg>
                     <span>Cetak Laporan</span>
-                </button>
+                </button> -->
             </div>
         </div>
 

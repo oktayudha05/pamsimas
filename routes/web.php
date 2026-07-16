@@ -20,6 +20,7 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', 'role:pengelola'])->group(function () {
     Route::resource('wargas', WargaController::class)->except(['create', 'show']);
     Route::resource('petugases', PetugasController::class)->except(['show']);
+    Route::get('rekap/excel', [RekapController::class, 'exportExcel'])->name('rekap.excel');
     Route::get('rekap', [RekapController::class, 'index'])->name('rekap.index');
 });
 
