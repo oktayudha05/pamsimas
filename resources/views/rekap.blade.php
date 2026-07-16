@@ -106,7 +106,8 @@
                 <div class="text-xs text-gray-400">Menampilkan seluruh data warga</div>
             </div>
 
-            <div class="overflow-x-auto rounded-xl border border-[#DAD887]/30">
+            <!-- Tabel Desktop / Mode Cetak (hidden md:block print:block) -->
+            <div class="hidden md:block print:block overflow-x-auto rounded-xl border border-[#DAD887]/30">
                 <table class="bento-table w-full">
                     <thead>
                         <tr>
@@ -141,6 +142,49 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            <!-- List Card Mobile (md:hidden print:hidden no-print) -->
+            <div class="md:hidden print:hidden no-print space-y-3">
+                @forelse($wargas as $warga)
+                    <div class="bg-[#F0F8A4]/10 border border-[#DAD887]/40 rounded-xl p-4 shadow-sm flex flex-col gap-3">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="font-semibold text-gray-900 text-base block">{{ $warga->nama }}</span>
+                                <span class="text-xs font-mono text-gray-400 mt-0.5 block">
+                                    No. Meter: {{ $warga->nomor_meteran }}
+                                </span>
+                            </div>
+                            <span class="inline-block bg-[#F0F8A4] text-[#36656B] text-xs font-bold px-2 py-0.5 rounded-md">
+                                RT {{ sprintf('%02d', $warga->rt) }} / RW {{ sprintf('%02d', $warga->rw) }}
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 text-center">
+                            <div class="bg-gray-50 border border-gray-100 rounded-lg py-2">
+                                <span class="text-[10px] text-gray-400 font-semibold uppercase block">Angka Meteran</span>
+                                <span class="font-mono text-sm font-semibold text-gray-700 block mt-0.5">
+                                    {{ $warga->pencatatan ? number_format($warga->pencatatan->angka_meteran) : '-' }}
+                                </span>
+                            </div>
+                            
+                            <div class="bg-[#F0F8A4]/20 border border-[#DAD887]/20 rounded-lg py-2">
+                                <span class="text-[10px] text-[#36656B]/70 font-semibold uppercase block">Pemakaian Air</span>
+                                <span class="font-mono text-sm font-semibold text-[#36656B] block mt-0.5">
+                                    @if($warga->pencatatan)
+                                        {{ number_format($warga->pencatatan->pemakaian) }} m³
+                                    @else
+                                        <span class="text-red-500 text-xs font-bold">Belum Diisi</span>
+                                    @endif
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="text-center py-8 text-gray-400 text-sm bg-gray-50 border border-dashed rounded-xl">
+                        Belum ada data warga terdaftar.
+                    </div>
+                @endforelse
             </div>
 
             <!-- Print Signature Panel -->

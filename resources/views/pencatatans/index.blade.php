@@ -41,7 +41,8 @@
     <div class="bg-white rounded-2xl p-6 border border-[#DAD887]/50 shadow-sm">
         <h2 class="text-lg font-bold text-[#36656B] mb-4">Pengisian Meteran Bulanan</h2>
 
-        <div class="overflow-x-auto rounded-xl border border-[#DAD887]/30">
+        <!-- Tabel Desktop (hidden md:block) -->
+        <div class="hidden md:block overflow-x-auto rounded-xl border border-[#DAD887]/30">
             <table class="bento-table">
                 <thead>
                     <tr>
@@ -132,6 +133,99 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+
+        <!-- List Card Mobile (md:hidden) -->
+        <div class="md:hidden space-y-3">
+            @forelse($wargas as $warga)
+                <div class="bg-[#F0F8A4]/10 border border-[#DAD887]/40 rounded-xl p-4 shadow-sm flex flex-col gap-3">
+                    
+                    <!-- Header: Nama & Status -->
+                    <div class="flex items-start justify-between gap-2">
+                        <div>
+                            <span class="font-semibold text-gray-900 text-base block">{{ $warga->nama }}</span>
+                            <span class="text-xs font-mono text-gray-400 mt-0.5 block">
+                                No. Meter: {{ $warga->nomor_meteran }} · RT {{ sprintf('%02d', $warga->rt) }}/RW {{ sprintf('%02d', $warga->rw) }}
+                            </span>
+                        </div>
+                        
+                        <div>
+                            @if($warga->pencatatan_sekarang)
+                                <span class="inline-flex items-center gap-1 bg-[#75B06F]/25 text-[#36656B] text-xs font-semibold px-2 py-0.5 rounded-lg border border-[#75B06F]/30">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-[#75B06F]"></span>
+                                    Sudah
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1 bg-red-50 text-red-700 text-xs font-semibold px-2 py-0.5 rounded-lg border border-red-200">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-red-700"></span>
+                                    Belum
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Detail Grid: Lalu vs Baru vs Keluar -->
+                    <div class="grid grid-cols-3 gap-2 text-center">
+                        <div class="bg-gray-50 border border-gray-100 rounded-lg py-2 px-1">
+                            <span class="text-[10px] text-gray-400 font-semibold uppercase block">Angka Lalu</span>
+                            <span class="font-mono text-sm font-semibold text-gray-700 block mt-0.5">
+                                {{ $warga->pencatatan_lalu ? number_format($warga->pencatatan_lalu->angka_meteran) : 0 }}
+                            </span>
+                        </div>
+                        
+                        <div class="bg-[#F0F8A4]/35 border border-[#DAD887]/30 rounded-lg py-2 px-1">
+                            <span class="text-[10px] text-[#36656B]/70 font-semibold uppercase block">Angka Baru</span>
+                            <span class="font-mono text-sm font-semibold text-[#36656B] block mt-0.5">
+                                @if($warga->pencatatan_sekarang)
+                                    {{ number_format($warga->pencatatan_sekarang->angka_meteran) }}
+                                @else
+                                    -
+                                @endif
+                            </span>
+                        </div>
+
+                        <div class="bg-gray-50 border border-gray-100 rounded-lg py-2 px-1">
+                            <span class="text-[10px] text-gray-400 font-semibold uppercase block">Pemakaian</span>
+                            <span class="font-mono text-sm font-semibold text-[#36656B] block mt-0.5">
+                                @if($warga->pencatatan_sekarang)
+                                    +{{ number_format($warga->pencatatan_sekarang->pemakaian) }} m³
+                                @else
+                                    -
+                                @endif
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Input / Reporter Action -->
+                    <div class="pt-2 border-t border-[#DAD887]/20 flex flex-col gap-2">
+                        @if($warga->pencatatan_sekarang)
+                            <div class="text-xs text-center text-gray-400 bg-gray-50/50 py-1.5 rounded-lg border border-gray-100">
+                                Dicatat oleh: <span class="font-medium text-gray-600">{{ $warga->pencatatan_sekarang->user->nama ?? 'Sistem' }}</span>
+                            </div>
+                        @else
+                            <form id="record-mobile-{{ $warga->id }}" action="{{ route('pencatatans.store') }}" method="POST" class="flex flex-col sm:flex-row gap-2 w-full">
+                                @csrf
+                                <input type="hidden" name="warga_id" value="{{ $warga->id }}">
+                                <input type="hidden" name="bulan" value="{{ $bulan }}">
+                                
+                                <div class="relative flex-1 min-w-0">
+                                    <input type="number" name="angka_meteran" min="0" placeholder="Input angka baru..." required
+                                        class="w-full px-3 py-2 bg-[#F0F8A4]/10 border border-[#DAD887] text-gray-800 text-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-[#36656B] focus:border-transparent transition">
+                                </div>
+                                
+                                <button type="submit"
+                                        class="bg-[#36656B] hover:bg-[#2a4f54] text-white text-sm font-semibold px-4 py-2 rounded-lg shadow-sm transition w-full sm:w-auto text-center shrink-0">
+                                    Simpan
+                                </button>
+                            </form>
+                        @endif
+                    </div>
+                </div>
+            @empty
+                <div class="text-center py-8 text-gray-400 text-sm bg-gray-50 border border-dashed rounded-xl">
+                    Belum ada data warga terdaftar.
+                </div>
+            @endforelse
         </div>
     </div>
 

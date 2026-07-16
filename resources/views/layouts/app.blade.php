@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,14 +14,28 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased bg-[#F0F8A4]/30 min-h-screen">
+    <body class="font-sans antialiased bg-[#F0F8A4]/30 min-h-screen flex flex-col h-full">
 
+        <!-- Navigation Bar -->
         @include('layouts.navigation')
 
         <!-- Page Content -->
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- flex-grow memaksa main section mengambil ruang sisa agar footer terdorong ke bawah -->
+        <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 w-full">
             {{ $slot }}
         </main>
+
+        <!-- Sticky Footer Mobile-Responsive -->
+        <footer class="w-full py-6 text-center border-t border-[#36656B]/10 bg-white/40 backdrop-blur-sm mt-auto">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <p class="text-[#36656B]/70 text-xs sm:text-sm font-medium">
+                    &copy; 2026 KKN UNTIDAR Desa Menggoro
+                </p>
+                <p class="text-[#36656B]/50 text-[10px] sm:text-xs mt-0.5 tracking-wide uppercase">
+                    Sistem Pencatatan Air - PAMSIMAS
+                </p>
+            </div>
+        </footer>
 
     </body>
 </html>
