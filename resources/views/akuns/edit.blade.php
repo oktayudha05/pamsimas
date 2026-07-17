@@ -1,5 +1,4 @@
 <x-app-layout>
-
     <div class="max-w-lg mx-auto">
         <div class="bg-white rounded-2xl p-6 border border-[#DAD887]/50 shadow-sm">
             <div class="flex items-center gap-3 mb-6">
@@ -9,8 +8,8 @@
                     </svg>
                 </div>
                 <div>
-                    <h1 class="text-lg font-bold text-[#36656B]">Edit Petugas</h1>
-                    <p class="text-xs text-gray-400">Update data akun: {{ $petugas->nama }}</p>
+                    <h1 class="text-lg font-bold text-[#36656B]">Edit Akun</h1>
+                    <p class="text-xs text-gray-400">Update data akun: {{ $akun->nama }}</p>
                 </div>
             </div>
 
@@ -20,18 +19,27 @@
                 </div>
             @endif
 
-            <form action="{{ route('petugases.update', $petugas) }}" method="POST" class="space-y-4">
+            <form action="{{ route('akuns.update', $akun) }}" method="POST" class="space-y-4">
                 @csrf
                 @method('PATCH')
                 <div>
                     <x-input-label for="nama" value="Nama Lengkap" />
-                    <x-text-input id="nama" name="nama" type="text" value="{{ old('nama', $petugas->nama) }}" required />
+                    <x-text-input id="nama" name="nama" type="text" value="{{ old('nama', $akun->nama) }}" required />
                     <x-input-error :messages="$errors->get('nama')" class="mt-1" />
                 </div>
                 <div>
                     <x-input-label for="username" value="Username" />
-                    <x-text-input id="username" name="username" type="text" value="{{ old('username', $petugas->username) }}" required />
+                    <x-text-input id="username" name="username" type="text" value="{{ old('username', $akun->username) }}" required />
                     <x-input-error :messages="$errors->get('username')" class="mt-1" />
+                </div>
+
+                <div>
+                    <x-input-label for="role" value="Hak Akses (Role)" />
+                    <select id="role" name="role" required class="w-full px-4 py-2.5 bg-[#F0F8A4]/40 border border-[#DAD887] text-gray-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#36656B] focus:border-transparent transition-all duration-150">
+                        <option value="petugas" {{ old('role', $akun->role) == 'petugas' ? 'selected' : '' }}>Petugas</option>
+                        <option value="pengelola" {{ old('role', $akun->role) == 'pengelola' ? 'selected' : '' }}>Pengelola</option>
+                    </select>
+                    <x-input-error :messages="$errors->get('role')" class="mt-1" />
                 </div>
 
                 <div class="border-t border-[#DAD887]/30 pt-4">
@@ -50,7 +58,7 @@
                 </div>
 
                 <div class="flex gap-3 pt-2">
-                    <a href="{{ route('petugases.index') }}"
+                    <a href="{{ route('akuns.index') }}"
                        class="flex-1 text-center bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 px-4 rounded-xl text-sm transition">
                         Batal
                     </a>
@@ -62,5 +70,4 @@
             </form>
         </div>
     </div>
-
 </x-app-layout>

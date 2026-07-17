@@ -27,10 +27,10 @@
                                   {{ request()->routeIs('wargas.*') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
                             Daftar Rumah
                         </a>
-                        <a href="{{ route('petugases.index') }}"
+                        <a href="{{ route('akuns.index') }}"
                            class="px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-150
-                                  {{ request()->routeIs('petugases.*') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
-                            Daftar Petugas
+                                  {{ request()->routeIs('akuns.*') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+                            Manajemen Akun
                         </a>
                     @endif
                     <a href="{{ route('pencatatans.index') }}"
@@ -114,13 +114,13 @@
                     </svg>
                     <span>Daftar Rumah</span>
                 </a>
-                <a href="{{ route('petugases.index') }}"
+                <a href="{{ route('akuns.index') }}"
                    class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-150
-                          {{ request()->routeIs('petugases.*') ? 'bg-white/20 text-white shadow-sm' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
+                          {{ request()->routeIs('akuns.*') ? 'bg-white/20 text-white shadow-sm' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
                     <svg class="w-5 h-5 opacity-70 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
                     </svg>
-                    <span>Daftar Petugas</span>
+                    <span>Manajemen Akun</span>
                 </a>
             @endif
             <a href="{{ route('pencatatans.index') }}"

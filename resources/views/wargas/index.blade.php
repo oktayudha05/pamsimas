@@ -86,7 +86,14 @@
                     <tbody>
                         @forelse($wargas as $warga)
                             <tr>
-                                <td class="font-medium text-gray-900">{{ $warga->nama }}</td>
+                                <td>
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 bg-[#75B06F]/20 rounded-lg flex items-center justify-center text-[#36656B] text-sm font-bold shrink-0">
+                                            {{ strtoupper(substr($warga->nama, 0, 1)) }}
+                                        </div>
+                                        <span class="font-medium text-gray-900">{{ $warga->nama }}</span>
+                                    </div>
+                                </td>
                                 <td class="text-center">
                                     <span class="inline-block bg-[#F0F8A4] text-[#36656B] text-xs font-bold px-2 py-0.5 rounded-md">
                                         RT {{ sprintf('%02d', $warga->rt) }} / RW {{ sprintf('%02d', $warga->rw) }}
@@ -124,29 +131,38 @@
             <div class="md:hidden space-y-3">
                 @forelse($wargas as $warga)
                     <div class="bg-[#F0F8A4]/10 border border-[#DAD887]/40 rounded-xl p-4 shadow-sm flex flex-col gap-3">
-                        <div class="flex items-center justify-between">
-                            <span class="font-semibold text-gray-900 text-base">{{ $warga->nama }}</span>
-                            <span class="inline-block bg-[#F0F8A4] text-[#36656B] text-xs font-bold px-2 py-0.5 rounded-md shrink-0 ml-2">
+                        
+                        {{-- BARIS 1: Avatar, Nama, No. Meteran, dan Badge RT/RW --}}
+                        <div class="flex items-center gap-3">
+                            {{-- Avatar --}}
+                            <span class="w-10 h-10 bg-[#75B06F]/20 rounded-xl flex items-center justify-center text-[#36656B] text-base font-bold shrink-0">
+                                {{ strtoupper(substr($warga->nama, 0, 1)) }}
+                            </span>
+                            
+                            {{-- Nama + No. Meteran --}}
+                            <div class="flex-1 min-w-0">
+                                <span class="font-semibold text-gray-900 text-base block truncate">{{ $warga->nama }}</span>
+                                <span class="text-xs font-mono text-gray-400 block mt-0.5">No. Meter: {{ $warga->nomor_meteran }}</span>
+                            </div>
+                            
+                            {{-- Badge RT/RW --}}
+                            <span class="inline-block bg-[#F0F8A4] text-[#36656B] text-xs font-bold px-2 py-1 rounded-md shrink-0">
                                 RT {{ sprintf('%02d', $warga->rt) }} / RW {{ sprintf('%02d', $warga->rw) }}
                             </span>
                         </div>
-                        <div class="flex flex-col gap-1">
-                            <span class="text-xs text-gray-400 font-medium">Nomor Meteran</span>
-                            <span class="font-mono text-sm text-gray-700 bg-gray-50 border border-gray-100 rounded-lg px-2 py-1 select-all w-fit">
-                                {{ $warga->nomor_meteran }}
-                            </span>
-                        </div>
+
+                        {{-- BARIS 2: Tombol Aksi --}}
                         <div class="flex items-center gap-2 pt-2 border-t border-[#DAD887]/30">
                             <a href="{{ route('wargas.edit', $warga) }}"
-                               class="flex-1 inline-flex justify-center items-center gap-1.5 bg-[#DAD887]/60 hover:bg-[#DAD887] text-[#36656B] text-xs font-semibold py-2.5 rounded-lg transition">
+                            class="flex-1 inline-flex justify-center items-center gap-1.5 bg-[#DAD887]/60 hover:bg-[#DAD887] text-[#36656B] text-xs font-semibold py-2.5 rounded-lg transition">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                 </svg>
                                 Edit
                             </a>
                             <form action="{{ route('wargas.destroy', $warga) }}" method="POST"
-                                  onsubmit="return confirm('Hapus data warga {{ $warga->nama }}?')"
-                                  class="flex-1">
+                                onsubmit="return confirm('Hapus data warga {{ $warga->nama }}?')"
+                                class="flex-1">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit"

@@ -6,7 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\WargaController;
 use App\Http\Controllers\PencatatanController;
 use App\Http\Controllers\RekapController;
-use App\Http\Controllers\PetugasController;
+use App\Http\Controllers\AkunController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -19,7 +19,7 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth', 'role:pengelola'])->group(function () {
     Route::resource('wargas', WargaController::class)->except(['create', 'show']);
-    Route::resource('petugases', PetugasController::class)->except(['show']);
+    Route::resource('akuns', AkunController::class)->except(['show']);
     Route::get('rekap/excel', [RekapController::class, 'exportExcel'])->name('rekap.excel');
     Route::get('rekap', [RekapController::class, 'index'])->name('rekap.index');
 });
