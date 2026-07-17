@@ -87,29 +87,7 @@
         </div>
 
         <!-- Row 2: Summary Stats and Overall Consumption (Bento Cards) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Total Pemakaian Air -->
-            <div class="bg-[#36656B] rounded-2xl p-6 flex flex-col justify-between min-h-[120px] text-white">
-                <p class="text-[#F0F8A4] text-xs font-semibold uppercase tracking-widest">Total Konsumsi Air</p>
-                <div class="flex items-baseline justify-between mt-4">
-                    <p class="text-4xl font-bold">{{ number_format($totalPemakaian) }} <span class="text-xl font-normal">m³</span></p>
-                    <svg class="w-8 h-8 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 9.172V5L8 4z"/>
-                    </svg>
-                </div>
-            </div>
 
-            <!-- Total Terdata -->
-            <div class="bg-[#DAD887] rounded-2xl p-6 flex flex-col justify-between min-h-[120px] text-[#36656B]">
-                <p class="text-[#36656B]/70 text-xs font-semibold uppercase tracking-widest">Warga Terdaftar</p>
-                <div class="flex items-baseline justify-between mt-4">
-                    <p class="text-4xl font-bold">{{ $wargas->count() }} <span class="text-xl font-normal">KK</span></p>
-                    <svg class="w-8 h-8 opacity-20 text-[#36656B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
-                    </svg>
-                </div>
-            </div>
-        </div>
 
         <!-- Row 3: Report Table -->
         <div class="bg-white rounded-2xl p-6 border border-[#DAD887]/50 shadow-sm">
@@ -126,8 +104,8 @@
                             <th>Nama Kepala Keluarga</th>
                             <th class="text-center">RT / RW</th>
                             <th>No. Meteran</th>
-                            <th class="text-right">Angka Meteran</th>
-                            <th class="text-right">Pemakaian (Selisih)</th>
+                            <th class="text-center">Angka Meteran</th>
+                            <th class="text-center">Pemakaian (Selisih)</th>
                         </tr>
                     </thead>
                     <tbody>

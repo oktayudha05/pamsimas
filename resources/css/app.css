@@ -34,7 +34,7 @@
         @apply bg-[#36656B] text-white;
     }
     .bento-table thead th {
-        @apply px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider;
+        @apply px-4 py-3 text-xs font-semibold uppercase tracking-wider;
     }
     .bento-table tbody tr {
         @apply border-b border-[#DAD887]/30 hover:bg-[#F0F8A4]/40 transition-colors duration-100;
