@@ -7,7 +7,7 @@ use App\Http\Controllers\WargaController;
 use App\Http\Controllers\PencatatanController;
 use App\Http\Controllers\RekapController;
 use App\Http\Controllers\AkunController;
-use App\Http\Controllers\KeuanganController;
+use App\Http\Controllers\PembayaranController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -21,11 +21,14 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', 'role:pengelola'])->group(function () {
     Route::resource('wargas', WargaController::class)->except(['create', 'show']);
     Route::resource('akuns', AkunController::class)->except(['show']);
-    Route::get('keuangan', [KeuanganController::class, 'index'])->name('keuangan.index');
-    Route::patch('keuangan/{id}', [KeuanganController::class, 'update'])->name('keuangan.update');
     
     Route::get('rekap/excel', [RekapController::class, 'exportExcel'])->name('rekap.excel');
     Route::get('rekap', [RekapController::class, 'index'])->name('rekap.index');
+});
+
+Route::middleware(['auth', 'role:pengelola,petugas'])->group(function () {
+    Route::get('pembayaran', [PembayaranController::class, 'index'])->name('pembayaran.index');
+    Route::patch('pembayaran/{id}', [PembayaranController::class, 'update'])->name('pembayaran.update');
 });
 
 Route::middleware('auth')->group(function () {

@@ -140,6 +140,17 @@ test('user cannot record smaller meter reading than previous month', function ()
     $response->assertSessionHasErrors('angka_meteran');
 });
 
+test('both pengelola and petugas can view pembayaran page', function () {
+    $pengelola = User::factory()->create(['role' => 'pengelola']);
+    $petugas = User::factory()->create(['role' => 'petugas']);
+
+    $response = $this->actingAs($pengelola)->get('/pembayaran');
+    $response->assertStatus(200);
+
+    $response = $this->actingAs($petugas)->get('/pembayaran');
+    $response->assertStatus(200);
+});
+
 test('pengelola can view rekapitulasi page but petugas cannot', function () {
     $pengelola = User::factory()->create(['role' => 'pengelola']);
     $petugas = User::factory()->create(['role' => 'petugas']);

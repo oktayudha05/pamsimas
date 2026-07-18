@@ -59,7 +59,7 @@
                         <tr>
                             <!-- Warga details -->
                             <td>
-                                <div class="font-medium text-gray-900">{{ $warga->nama }}</div>
+                                <div class="font-semibold text-gray-900">{{ $warga->nama }}</div>
                                 @if($warga->dusun === 'sragan')
                                 <div class="text-xs text-gray-400 font-mono mt-0.5">
                                     No. Meter: {{ $warga->nomor_meteran }} | RT {{ sprintf('%02d', $warga->rt) }}/RW {{ sprintf('%02d', $warga->rw) }}

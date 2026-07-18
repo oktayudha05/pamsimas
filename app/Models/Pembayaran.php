@@ -4,8 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Keuangan extends Model
+class Pembayaran extends Model
 {
+    protected $table = 'pembayarans';
+
     protected $fillable = [
         'dusun',
         'harga_per_meter',
@@ -13,9 +15,6 @@ class Keuangan extends Model
         'is_active',
     ];
 
-    /**
-     * Ambil tarif yang sedang aktif berdasarkan dusun
-     */
     public static function getTarifAktif($dusun)
     {
         return self::where('dusun', $dusun)

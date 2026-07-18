@@ -14,7 +14,12 @@ class CheckRole
      */
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
-        if (!Auth::check() || !in_array(Auth::user()->role, $roles)) {
+        $allowedRoles = collect($roles)
+            ->flatMap(fn($role) => explode(',', $role))
+            ->map(fn($role) => trim($role))
+            ->toArray();
+
+        if (!Auth::check() || !in_array(Auth::user()->role, $allowedRoles)) {
             abort(403, 'Akses ditolak. Anda tidak memiliki izin untuk membuka halaman ini.');
         }
 

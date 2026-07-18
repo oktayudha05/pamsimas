@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Warga;
 use App\Models\Pencatatan;
-use App\Models\Keuangan;
+use App\Models\Pembayaran;
 use Illuminate\Http\Request;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -46,7 +46,7 @@ class RekapController extends Controller
             $totalPemakaian += $warga->pemakaian;
 
             // 4. Rincian Tarif (Dinamis dari Model Keuangan)
-            $tarif = Keuangan::getTarifAktif($warga->dusun);
+            $tarif = Pembayaran::getTarifAktif($warga->dusun);
             $warga->tarif_per_meter = $tarif ? $tarif->harga_per_meter : 0;
             $warga->dana_meter = $tarif ? $tarif->dana_meter : 0;
 
@@ -125,7 +125,7 @@ class RekapController extends Controller
             $meterAkhir = $pencatatan ? $pencatatan->angka_meteran : 0;
             $pemakaian = $pencatatan ? $pencatatan->pemakaian : 0;
             
-            $tarif = Keuangan::getTarifAktif($warga->dusun);
+            $tarif = Pembayaran::getTarifAktif($warga->dusun);
             $tarifPerMeter = $tarif ? $tarif->harga_per_meter : 0;
             $danaMeter = $tarif ? $tarif->dana_meter : 0;
 

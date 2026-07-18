@@ -32,7 +32,7 @@
                     &copy; 2026 KKN UNTIDAR Desa Menggoro
                 </p>
                 <p class="text-[#36656B]/50 text-[10px] sm:text-xs mt-0.5 tracking-wide uppercase">
-                    Sistem Pencatatan Air - Dusun Sragan
+                    Tirta Anugerah - Dusun Sragan
                 </p>
             </div>
         </footer>

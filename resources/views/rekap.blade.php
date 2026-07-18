@@ -22,7 +22,7 @@
                     </svg>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold text-[#36656B]">Rekap Keuangan Bulanan</h1>
+                    <h1 class="text-xl font-bold text-[#36656B]">Rekap Pembayaran Bulanan</h1>
                     <p class="text-xs text-gray-400">Rincian pemakaian, tagihan, dan status pembayaran</p>
                 </div>
             </div>
@@ -72,9 +72,8 @@
 
         <!-- Row 3: Report Table -->
         <div class="bg-white rounded-2xl border border-[#DAD887]/50 shadow-sm overflow-hidden">
-            <div class="p-6 border-b border-[#DAD887]/30 flex items-center justify-between no-print">
+            <div class="pl-6 pr-2 pt-6 border-[#DAD887]/30 flex items-center justify-between no-print">
                 <h2 class="text-lg font-bold text-[#36656B]">Laporan Rincian Tagihan</h2>
-                <div class="text-xs text-gray-400">Scroll ke kanan untuk melihat detail keuangan</div>
             </div>
 
             <!-- Tabel Desktop / Mode Cetak -->
