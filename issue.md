@@ -2,7 +2,7 @@
 
 ## Latar Belakang
 
-Aplikasi PAMSIMAS saat ini sudah berjalan dengan baik di desktop/laptop.
+Aplikasi Tirta Anugerah saat ini sudah berjalan dengan baik di desktop/laptop.
 Namun ketika dibuka di HP (handphone), beberapa halaman terlihat tidak rapi:
 - Tabel terlalu lebar sehingga harus geser ke kanan
 - Tombol terlalu kecil dan susah dipencet

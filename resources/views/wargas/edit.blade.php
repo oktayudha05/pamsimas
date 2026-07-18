@@ -1,5 +1,4 @@
 <x-app-layout>
-
     <div class="max-w-lg mx-auto">
         <div class="bg-white rounded-2xl p-6 border border-[#DAD887]/50 shadow-sm">
             <div class="flex items-center gap-3 mb-6">
@@ -20,24 +19,38 @@
                 </div>
             @endif
 
-            <form action="{{ route('wargas.update', $warga) }}" method="POST" class="space-y-4">
+            <form action="{{ route('wargas.update', $warga) }}" method="POST" class="space-y-4"
+                  x-data="{ dusun: '{{ old('dusun', $warga->dusun ?? 'sragan') }}' }">
                 @csrf
                 @method('PATCH')
+                
                 <div>
                     <x-input-label for="nama" value="Nama Kepala Keluarga" />
                     <x-text-input id="nama" name="nama" type="text" value="{{ old('nama', $warga->nama) }}" required />
                     <x-input-error :messages="$errors->get('nama')" class="mt-1" />
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <x-input-label for="dusun" value="Lokasi Dusun" />
+                    <select id="dusun" name="dusun" x-model="dusun" required
+                        class="w-full px-4 py-2.5 bg-[#F0F8A4]/40 border border-[#DAD887] text-gray-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#36656B] focus:border-transparent transition-all duration-150">
+                        <option value="sragan">📍 Dusun Sragan (ada RT/RW)</option>
+                        <option value="luar_sragan">🌐 Luar Dusun Sragan (tanpa RT/RW)</option>
+                    </select>
+                    <x-input-error :messages="$errors->get('dusun')" class="mt-1" />
+                </div>
+
+                <div x-show="dusun === 'sragan'" 
+                     x-transition
+                     class="grid grid-cols-2 gap-4">
                     <div>
                         <x-input-label for="rt" value="No. RT" />
-                        <x-text-input id="rt" name="rt" type="number" min="1" value="{{ old('rt', $warga->rt) }}" required />
+                        <x-text-input id="rt" name="rt" type="number" min="1" value="{{ old('rt', $warga->rt) }}" />
                         <x-input-error :messages="$errors->get('rt')" class="mt-1" />
                     </div>
                     <div>
                         <x-input-label for="rw" value="No. RW" />
-                        <x-text-input id="rw" name="rw" type="number" min="1" value="{{ old('rw', $warga->rw) }}" required />
+                        <x-text-input id="rw" name="rw" type="number" min="1" value="{{ old('rw', $warga->rw) }}" />
                         <x-input-error :messages="$errors->get('rw')" class="mt-1" />
                     </div>
                 </div>
@@ -61,5 +74,4 @@
             </form>
         </div>
     </div>
-
 </x-app-layout>

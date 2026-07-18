@@ -181,7 +181,7 @@
             <div class="hidden print:flex justify-between mt-12 text-sm">
                 <div></div>
                 <div class="text-center">
-                    <p class="mb-16">Pengelola/Petugas PAMSIMAS</p>
+                    <p class="mb-16">Pengelola/Petugas TIRTA ANUGERAH</p>
                     <p class="font-bold underline">{{ Auth::user()->nama }}</p>
                 </div>
             </div>

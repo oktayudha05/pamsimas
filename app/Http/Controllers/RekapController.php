@@ -61,7 +61,7 @@ class RekapController extends Controller
         
         // ===== JUDUL LAPORAN =====
         $sheet->mergeCells('A1:E1');
-        $sheet->setCellValue('A1', 'REKAPITULASI PENGGUNAAN AIR PAMSIMAS');
+        $sheet->setCellValue('A1', 'REKAPITULASI PENGGUNAAN AIR TIRTA ANUGERAH');
         $sheet->setCellValue('A2', 'Periode: ' . $namaBulan);
         
         $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);

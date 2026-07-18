@@ -249,7 +249,7 @@
         const rtData = @json($pemakaianPerRt);
         const wargaData = @json($wargaPerRt);
 
-        // Warna tema PAMSIMAS
+        // Warna tema TIRTA ANUGERAH
         const colors = {
             primary: '#36656B',
             secondary: '#75B06F',

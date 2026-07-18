@@ -12,7 +12,8 @@ class WargaController extends Controller
      */
     public function index()
     {
-        $wargas = Warga::orderBy('rt')
+        $wargas = Warga::orderBy('dusun')
+            ->orderBy('rt')
             ->orderBy('rw')
             ->orderBy('nama')
             ->get();
@@ -27,12 +28,13 @@ class WargaController extends Controller
     {
         $request->validate([
             'nama' => ['required', 'string', 'max:255'],
-            'rt' => ['required', 'integer', 'min:1'],
-            'rw' => ['required', 'integer', 'min:1'],
+            'dusun' => ['required', 'in:sragan,luar_sragan'],
+            'rt' => ['required_if:dusun,sragan', 'nullable', 'integer', 'min:1'],
+            'rw' => ['required_if:dusun,sragan', 'nullable', 'integer', 'min:1'],
             'nomor_meteran' => ['required', 'string', 'max:255', 'unique:wargas,nomor_meteran'],
         ]);
 
-        Warga::create($request->only('nama', 'rt', 'rw', 'nomor_meteran'));
+        Warga::create($request->only('nama', 'dusun', 'nomor_meteran'));
 
         return redirect()->route('wargas.index')->with('success', 'Data warga berhasil ditambahkan.');
     }
@@ -52,12 +54,23 @@ class WargaController extends Controller
     {
         $request->validate([
             'nama' => ['required', 'string', 'max:255'],
-            'rt' => ['required', 'integer', 'min:1'],
-            'rw' => ['required', 'integer', 'min:1'],
+            'dusun' => ['required', 'in:sragan,luar_sragan'],
+            'rt' => ['required_if:dusun,sragan', 'nullable', 'integer', 'min:1'],
+            'rw' => ['required_if:dusun,sragan', 'nullable', 'integer', 'min:1'],
             'nomor_meteran' => ['required', 'string', 'max:255', 'unique:wargas,nomor_meteran,' . $warga->id],
         ]);
 
-        $warga->update($request->only('nama', 'rt', 'rw', 'nomor_meteran'));
+        $warga->update($request->only('nama', 'dusun', 'nomor_meteran'));
+
+        if ($request->dusun === 'luan_sragan') {
+            $data['rt'] = null;
+            $data['rw'] = null;
+        } else {
+            $data['rt'] = $request->rt;
+            $data['rw'] = $request->rw;
+        }
+        
+        $warga->update($data);
 
         return redirect()->route('wargas.index')->with('success', 'Data warga berhasil diperbarui.');
     }

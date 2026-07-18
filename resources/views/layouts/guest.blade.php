@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'PAMSIMAS') }} - Login</title>
+        <title>{{ config('app.name', 'TIRTA ANUGERAH') }} - Login</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,7 +29,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                             </svg>
                         </div>
-                        <h1 class="text-2xl md:text-3xl font-bold text-white md:mb-3">PAMSIMAS</h1>
+                        <h1 class="text-2xl md:text-3xl font-bold text-white md:mb-3">TIRTA ANUGERAH</h1>
                     </div>
                     <p class="text-[#F0F8A4] text-sm leading-relaxed hidden md:block mt-3">
                         Sistem Pencatatan Air Bersih Dusun — digital, rapi, dan mudah diakses petugas di lapangan.

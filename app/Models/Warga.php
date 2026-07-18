@@ -8,6 +8,7 @@ class Warga extends Model
 {
     protected $fillable = [
         'nama',
+        'dusun',
         'rt',
         'rw',
         'nomor_meteran',

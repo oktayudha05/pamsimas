@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'PAMSIMAS') }} - Sistem Pencatatan Air Dusun</title>
+        <title>{{ config('app.name', 'Tirta Anugerah') }} - Sistem Pencatatan Air Dusun</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,7 +32,7 @@
                     &copy; 2026 KKN UNTIDAR Desa Menggoro
                 </p>
                 <p class="text-[#36656B]/50 text-[10px] sm:text-xs mt-0.5 tracking-wide uppercase">
-                    Sistem Pencatatan Air - PAMSIMAS
+                    Sistem Pencatatan Air - Dusun Sragan
                 </p>
             </div>
         </footer>
