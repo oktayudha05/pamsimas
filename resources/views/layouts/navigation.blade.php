@@ -32,12 +32,19 @@
                                   {{ request()->routeIs('akuns.*') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
                             Manajemen Akun
                         </a>
+                        <a href="{{ route('keuangan.index') }}"
+                            class="px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-150
+                                {{ request()->routeIs('keuangan.*') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+                            Keuangan
+                        </a>
+                        
                     @endif
                     <a href="{{ route('pencatatans.index') }}"
                        class="px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-150
                               {{ request()->routeIs('pencatatans.*') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
                         Pencatatan Air
                     </a>
+                    
                     @if (Auth::user()->role === 'pengelola')
                         <a href="{{ route('rekap.index') }}"
                            class="px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-150

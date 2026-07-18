@@ -60,9 +60,15 @@
                             <!-- Warga details -->
                             <td>
                                 <div class="font-medium text-gray-900">{{ $warga->nama }}</div>
+                                @if($warga->dusun === 'sragan')
                                 <div class="text-xs text-gray-400 font-mono mt-0.5">
                                     No. Meter: {{ $warga->nomor_meteran }} | RT {{ sprintf('%02d', $warga->rt) }}/RW {{ sprintf('%02d', $warga->rw) }}
                                 </div>
+                                @else
+                                <div class="text-xs text-gray-400 font-mono mt-0.5">
+                                    No. Meter: {{ $warga->nomor_meteran }} | Luar Sragan
+                                </div>
+                                @endif
                             </td>
 
                             <!-- Input Status -->
@@ -144,8 +150,17 @@
                     <div class="flex items-start justify-between gap-2">
                         <div>
                             <span class="font-semibold text-gray-900 text-base block">{{ $warga->nama }}</span>
+                            @if($warga->dusun === 'sragan')
+                                <span class="inline-block bg-[#F0F8A4] text-[#36656B] text-xs font-bold px-2 py-0.5 rounded-md">
+                                    RT {{ sprintf('%02d', $warga->rt) }} / RW {{ sprintf('%02d', $warga->rw) }}
+                                </span>
+                            @else
+                                <span class="inline-block bg-gray-100 text-gray-600 text-xs font-bold px-2 py-0.5 rounded-md">
+                                    Luar Sragan
+                                </span>
+                            @endif
                             <span class="text-xs font-mono text-gray-400 mt-0.5 block">
-                                No. Meter: {{ $warga->nomor_meteran }} · RT {{ sprintf('%02d', $warga->rt) }}/RW {{ sprintf('%02d', $warga->rw) }}
+                                No. Meter: {{ $warga->nomor_meteran }}
                             </span>
                         </div>
                         

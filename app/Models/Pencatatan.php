@@ -10,6 +10,8 @@ class Pencatatan extends Model
         'warga_id',
         'bulan',
         'angka_meteran',
+        'dibayar',
+        'titip',
         'pemakaian',
         'user_id',
     ];

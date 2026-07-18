@@ -166,7 +166,9 @@
                             </div>
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm font-semibold text-gray-900 truncate">{{ $w['nama'] }}</p>
-                                <p class="text-[10px] text-gray-400">RT {{ $w['rt'] }}</p>
+                                <p class="text-[10px] text-gray-400">
+                                    {{ $w['rt'] === 'Luar Sragan' ? 'Luar Sragan' : 'RT ' . $w['rt'] }}
+                                </p>
                             </div>
                             <div class="text-right shrink-0">
                                 <p class="text-sm font-bold text-[#36656B]">{{ number_format($w['pemakaian']) }}</p>

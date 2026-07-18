@@ -112,7 +112,11 @@
                         @forelse($wargas as $warga)
                             <tr>
                                 <td class="font-medium text-gray-900">{{ $warga->nama }}</td>
-                                <td class="text-center">RT {{ sprintf('%02d', $warga->rt) }} / RW {{ sprintf('%02d', $warga->rw) }}</td>
+                                @if($warga->dusun === 'sragan')
+                                    <td class="text-center">RT {{ sprintf('%02d', $warga->rt) }} / RW {{ sprintf('%02d', $warga->rw) }}</td>
+                                @else
+                                    <td class="text-center">Luar Sragan</td>
+                                @endif
                                 <td class="font-mono text-xs text-gray-500">{{ $warga->nomor_meteran }}</td>
                                 <td class="text-right font-mono">
                                     {{ $warga->pencatatan ? number_format($warga->pencatatan->angka_meteran) : '-' }}
@@ -145,9 +149,15 @@
                                     No. Meter: {{ $warga->nomor_meteran }}
                                 </span>
                             </div>
-                            <span class="inline-block bg-[#F0F8A4] text-[#36656B] text-xs font-bold px-2 py-0.5 rounded-md">
-                                RT {{ sprintf('%02d', $warga->rt) }} / RW {{ sprintf('%02d', $warga->rw) }}
-                            </span>
+                            @if($warga->dusun === 'sragan')
+                                <span class="inline-block bg-[#F0F8A4] text-[#36656B] text-xs font-bold px-2 py-0.5 rounded-md">
+                                    RT {{ sprintf('%02d', $warga->rt) }} / RW {{ sprintf('%02d', $warga->rw) }}
+                                </span>
+                            @else
+                                <span class="inline-block bg-gray-100 text-gray-600 text-xs font-bold px-2 py-0.5 rounded-md">
+                                    Luar Sragan
+                                </span>
+                            @endif
                         </div>
 
                         <div class="grid grid-cols-2 gap-2 text-center">
