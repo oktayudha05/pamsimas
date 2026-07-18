@@ -55,11 +55,11 @@
                 </span> -->
                 <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#36656B] tracking-tight mb-6">
                     Pencatatan Air Bersih <br class="hidden sm:block" />
-                    <span class="text-[#75B06F]">Lebih Transparan & Akurat</span>
+                    <span class="text-[#75B06F]">Terpadu Cepat & Akurat</span>
                 </h1>
                 <p class="max-w-2xl mx-auto text-lg text-gray-600 mb-10 leading-relaxed">
                     Platform digital untuk pengelolaan data meteran air, perhitungan tagihan otomatis, 
-                    dan monitoring pemakaian air warga secara real-time.
+                    dan monitoring pemakaian air warga.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     <a href="{{ route('login') }}" class="inline-flex items-center justify-center gap-2 bg-[#36656B] hover:bg-[#2a4f54] text-white font-semibold px-8 py-3.5 rounded-xl transition-all duration-150 shadow-lg hover:shadow-xl hover:-translate-y-0.5">

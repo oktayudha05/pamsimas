@@ -32,7 +32,7 @@
                         <h1 class="text-2xl md:text-3xl font-bold text-white md:mb-3">TIRTA ANUGERAH</h1>
                     </div>
                     <p class="text-[#F0F8A4] text-sm leading-relaxed hidden md:block mt-3">
-                        Sistem Pencatatan Air Bersih Dusun — digital, rapi, dan mudah diakses petugas di lapangan.
+                        Pencatatan Air Bersih Terpadu Cepat & Akurat
                     </p>
                 </div>
 
@@ -52,7 +52,7 @@
             <!-- Right Panel - Login Form Bento Tile -->
             <div class="bg-white rounded-2xl p-6 md:p-10 flex flex-col justify-center">
                 <h2 class="text-xl md:text-2xl font-bold text-[#36656B] mb-1">Masuk</h2>
-                <p class="text-gray-500 text-sm mb-6 md:mb-8">Gunakan credential yang diberikan pengelola.</p>
+                <p class="text-gray-500 text-sm mb-6 md:mb-8">Gunakan akun yang diberikan pengelola.</p>
 
                 {{ $slot }}
             </div>
