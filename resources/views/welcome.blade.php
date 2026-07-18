@@ -11,6 +11,9 @@
 
     <!-- Scripts & Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body class="font-sans antialiased bg-[#F0F8A4]/20 text-[#1b1b18] flex flex-col min-h-screen">
 
@@ -18,7 +21,6 @@
     <nav class="bg-white/80 backdrop-blur-md border-b border-[#DAD887]/50 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <!-- Brand -->
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-[#36656B] rounded-xl flex items-center justify-center text-white">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -31,7 +33,6 @@
                     </div>
                 </div>
 
-                <!-- Login Button -->
                 @if (Route::has('login'))
                     <a href="{{ route('login') }}" class="inline-flex items-center gap-2 bg-[#36656B] hover:bg-[#2a4f54] text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-all duration-150 shadow-sm hover:shadow-md">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -47,18 +48,18 @@
     <!-- Main Content -->
     <main class="flex-grow">
         <!-- Hero Section -->
-        <section class="relative overflow-hidden pt-16 pb-20 lg:pt-24 lg:pb-28">
+        <section class="relative overflow-hidden pt-16 pb-12 lg:pt-24 lg:pb-16">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <span class="inline-block bg-[#DAD887]/40 text-[#36656B] text-xs font-bold px-3 py-1 rounded-full mb-6 tracking-wide uppercase">
+                <!-- <span class="inline-block bg-[#DAD887]/40 text-[#36656B] text-xs font-bold px-3 py-1 rounded-full mb-6 tracking-wide uppercase">
                     Sistem Digital Terpadu
-                </span>
+                </span> -->
                 <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#36656B] tracking-tight mb-6">
                     Pencatatan Air Bersih <br class="hidden sm:block" />
                     <span class="text-[#75B06F]">Lebih Transparan & Akurat</span>
                 </h1>
                 <p class="max-w-2xl mx-auto text-lg text-gray-600 mb-10 leading-relaxed">
                     Platform digital untuk pengelolaan data meteran air, perhitungan tagihan otomatis, 
-                    dan monitoring pemakaian air warga Dusun Sragan.
+                    dan monitoring pemakaian air warga secara real-time.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     <a href="{{ route('login') }}" class="inline-flex items-center justify-center gap-2 bg-[#36656B] hover:bg-[#2a4f54] text-white font-semibold px-8 py-3.5 rounded-xl transition-all duration-150 shadow-lg hover:shadow-xl hover:-translate-y-0.5">
@@ -74,49 +75,40 @@
             </div>
         </section>
 
-        <!-- Stats Section -->
+        <!-- Chart Stats Section -->
         <section id="statistik" class="py-16 bg-white border-y border-[#DAD887]/30">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-12">
-                    <h2 class="text-2xl sm:text-3xl font-bold text-[#36656B]">Statistik Layanan Bulan Ini</h2>
-                    <p class="text-gray-500 mt-2">Data terkini per {{ \Carbon\Carbon::now()->translatedFormat('F Y') }}</p>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-[#36656B]">Statistik Layanan Terkini</h2>
+                    <p class="text-gray-500 mt-2">Data visual per {{ \Carbon\Carbon::now()->translatedFormat('F Y') }}</p>
                 </div>
                 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <!-- Stat 1 -->
-                    <div class="bg-[#F0F8A4]/30 rounded-2xl p-6 border border-[#DAD887]/50 text-center hover:shadow-md transition-shadow">
-                        <div class="w-12 h-12 bg-[#36656B] rounded-xl flex items-center justify-center text-white mx-auto mb-4">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            </svg>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Chart 1: Tren Pemakaian -->
+                    <div class="bg-[#F0F8A4]/20 rounded-2xl p-6 border border-[#DAD887]/50 shadow-sm">
+                        <h3 class="text-lg font-bold text-[#36656B] mb-2 text-center">Tren Pemakaian Air (6 Bulan)</h3>
+                        <div class="h-64 sm:h-72">
+                            <canvas id="trendChart"></canvas>
                         </div>
-                        <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Warga Terlayani</p>
-                        <p class="text-4xl font-extrabold text-[#36656B] mt-2">{{ number_format($stats['total_warga']) }}</p>
-                        <p class="text-xs text-gray-400 mt-1">Kepala Keluarga</p>
                     </div>
 
-                    <!-- Stat 2 -->
-                    <div class="bg-[#75B06F]/10 rounded-2xl p-6 border border-[#75B06F]/30 text-center hover:shadow-md transition-shadow">
-                        <div class="w-12 h-12 bg-[#75B06F] rounded-xl flex items-center justify-center text-white mx-auto mb-4">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                            </svg>
+                    <!-- Chart 2: Distribusi Warga -->
+                    <div class="bg-[#75B06F]/10 rounded-2xl p-6 border border-[#75B06F]/30 shadow-sm flex flex-col">
+                        <h3 class="text-lg font-bold text-[#36656B] mb-2 text-center">Distribusi Warga Terlayani</h3>
+                        <div class="h-64 sm:h-72 flex items-center justify-center">
+                            <canvas id="dusunChart"></canvas>
                         </div>
-                        <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Pemakaian</p>
-                        <p class="text-4xl font-extrabold text-[#75B06F] mt-2">{{ number_format($stats['total_pemakaian_bulan_ini']) }}</p>
-                        <p class="text-xs text-gray-400 mt-1">Meter Kubik (m³)</p>
-                    </div>
-
-                    <!-- Stat 3 -->
-                    <div class="bg-[#DAD887]/30 rounded-2xl p-6 border border-[#DAD887]/50 text-center hover:shadow-md transition-shadow">
-                        <div class="w-12 h-12 bg-[#DAD887] rounded-xl flex items-center justify-center text-[#36656B] mx-auto mb-4">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
+                        <!-- Summary Text di Bawah Chart -->
+                        <div class="mt-6 grid grid-cols-2 gap-4 text-center">
+                            <div class="bg-white/60 rounded-xl p-3">
+                                <p class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Total KK</p>
+                                <p class="text-2xl font-extrabold text-[#36656B]">{{ number_format($stats['total_warga']) }}</p>
+                            </div>
+                            <div class="bg-white/60 rounded-xl p-3">
+                                <p class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Pemakaian Bulan Ini</p>
+                                <p class="text-2xl font-extrabold text-[#75B06F]">{{ number_format($stats['total_pemakaian_bulan_ini']) }} <span class="text-sm font-normal">m³</span></p>
+                            </div>
                         </div>
-                        <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Status Layanan</p>
-                        <p class="text-3xl font-extrabold text-[#36656B] mt-3">{{ $stats['status_layanan'] }}</p>
-                        <p class="text-xs text-gray-400 mt-1">Sistem Berjalan Normal</p>
                     </div>
                 </div>
             </div>
@@ -128,16 +120,109 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row justify-between items-center gap-4">
                 <div class="text-center md:text-left">
-                    <p class="font-bold text-lg">TIRTA ANUGERAH</p>
-                    <p class="text-white/60 text-sm mt-1">Sistem Pencatatan Air Bersih PAMSIMAS</p>
+                    <p class="text-white/60 text-sm mt-1">Sistem Pencatatan Air Dusun Sragan</p>
                 </div>
                 <div class="text-center md:text-right text-white/60 text-sm">
                     <p>&copy; {{ date('Y') }} KKN UNTIDAR Desa Menggoro.</p>
-                    <p class="mt-1">Hak Cipta Dilindungi.</p>
                 </div>
             </div>
         </div>
     </footer>
 
+    <!-- Chart Initialization Script -->
+    <script>
+        // Data dari Laravel
+        const trendData = @json($trendBulanan);
+        const dusunData = @json($wargaPerDusun);
+
+        // Warna Tema
+        const colors = {
+            primary: '#36656B',
+            secondary: '#75B06F',
+            accent: '#DAD887',
+        };
+
+        Chart.defaults.font.family = 'Inter, system-ui, sans-serif';
+        Chart.defaults.color = '#6b7280';
+
+        // 1. Line Chart: Tren Pemakaian
+        new Chart(document.getElementById('trendChart'), {
+            type: 'line',
+            data: {
+                labels: trendData.map(d => d.bulan),
+                datasets: [{
+                    label: 'Pemakaian (m³)',
+                    data: trendData.map(d => d.total),
+                    borderColor: colors.primary,
+                    backgroundColor: colors.primary + '20',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: colors.primary,
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: colors.primary,
+                        padding: 10,
+                        cornerRadius: 8,
+                        callbacks: { label: ctx => ctx.parsed.y.toLocaleString('id-ID') + ' m³' }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#e5e7eb' },
+                        ticks: { callback: v => v.toLocaleString('id-ID') }
+                    },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // 2. Doughnut Chart: Distribusi Dusun
+        new Chart(document.getElementById('dusunChart'), {
+            type: 'doughnut',
+            data: {
+                labels: dusunData.map(d => d.label),
+                datasets: [{
+                    data: dusunData.map(d => d.total),
+                    backgroundColor: [colors.primary, colors.secondary],
+                    borderWidth: 0,
+                    hoverOffset: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '65%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            padding: 20,
+                            font: { size: 12, weight: '600' }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: colors.primary,
+                        padding: 10,
+                        cornerRadius: 8,
+                        callbacks: { label: ctx => ctx.label + ': ' + ctx.parsed + ' KK' }
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 </html>

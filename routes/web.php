@@ -9,17 +9,40 @@ use App\Http\Controllers\RekapController;
 use App\Http\Controllers\AkunController;
 use App\Http\Controllers\PembayaranController;
 use App\Models\Warga;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use App\Models\Pencatatan;
 
 Route::get('/', function () {
-    // Ambil data statistik dasar untuk ditampilkan di halaman publik
+    // 1. Data Statistik Dasar
     $stats = [
         'total_warga' => Warga::count(),
         'total_pemakaian_bulan_ini' => Pencatatan::where('bulan', date('Y-m'))->sum('pemakaian'),
         'status_layanan' => 'Aktif & Terlayani',
     ];
-    
-    return view('welcome', compact('stats'));
+
+    // 2. Data Tren 6 Bulan (untuk Line Chart)
+    $trendBulanan = [];
+    for ($i = 5; $i >= 0; $i--) {
+        $targetBulan = Carbon::now()->subMonths($i)->format('Y-m');
+        $total = Pencatatan::where('bulan', $targetBulan)->sum('pemakaian');
+        $trendBulanan[] = [
+            'bulan' => Carbon::parse($targetBulan . '-01')->translatedFormat('M Y'),
+            'total' => $total,
+        ];
+    }
+
+    // 3. Data Distribusi per Dusun (untuk Doughnut Chart)
+    $wargaPerDusun = Warga::select('dusun', DB::raw('count(*) as total'))
+        ->groupBy('dusun')
+        ->get()
+        ->map(fn($r) => [
+            'label' => $r->dusun === 'sragan' ? 'Dusun Sragan' : 'Luar Sragan',
+            'total' => $r->total,
+        ]);
+
+    // Kirim semua data ke view welcome
+    return view('welcome', compact('stats', 'trendBulanan', 'wargaPerDusun'));
 });
 
 Route::middleware(['auth'])->group(function () {
