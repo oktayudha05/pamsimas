@@ -50,7 +50,6 @@ class RekapController extends Controller
             $warga->tarif_per_meter = $tarif ? $tarif->harga_per_meter : 0;
             $warga->dana_meter = $tarif ? $tarif->dana_meter : 0;
 
-            // 5. Kalkulasi Keuangan
             $warga->harga_air = $warga->pemakaian * $warga->tarif_per_meter;
             $warga->tagihan_bulan_ini = $warga->harga_air + $warga->dana_meter;
             
