@@ -22,7 +22,6 @@
             <!-- Left Panel - Branding Bento Tile -->
             <div class="bg-[#36656B] rounded-2xl p-6 md:p-10 flex flex-col justify-between">
                 <div>
-                    <!-- Logo + Judul sejajar di HP -->
                     <div class="flex items-center gap-3 md:block">
                         <div class="w-11 h-11 md:w-14 md:h-14 bg-[#DAD887] rounded-xl flex items-center justify-center shrink-0 md:mb-8">
                             <svg class="w-6 h-6 md:w-8 md:h-8 text-[#36656B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
