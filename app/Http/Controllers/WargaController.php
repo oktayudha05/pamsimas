@@ -75,9 +75,6 @@ class WargaController extends Controller
         return redirect()->route('wargas.index')->with('success', 'Data warga berhasil diperbarui.');
     }
 
-    /**
-     * Remove the specified warga from storage.
-     */
     public function destroy(Warga $warga)
     {
         $warga->delete();
