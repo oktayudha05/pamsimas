@@ -8,9 +8,18 @@ use App\Http\Controllers\PencatatanController;
 use App\Http\Controllers\RekapController;
 use App\Http\Controllers\AkunController;
 use App\Http\Controllers\PembayaranController;
+use App\Models\Warga;
+use App\Models\Pencatatan;
 
 Route::get('/', function () {
-    return view('welcome');
+    // Ambil data statistik dasar untuk ditampilkan di halaman publik
+    $stats = [
+        'total_warga' => Warga::count(),
+        'total_pemakaian_bulan_ini' => Pencatatan::where('bulan', date('Y-m'))->sum('pemakaian'),
+        'status_layanan' => 'Aktif & Terlayani',
+    ];
+    
+    return view('welcome', compact('stats'));
 });
 
 Route::middleware(['auth'])->group(function () {
