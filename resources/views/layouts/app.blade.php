@@ -20,7 +20,6 @@
         @include('layouts.navigation')
 
         <!-- Page Content -->
-        <!-- flex-grow memaksa main section mengambil ruang sisa agar footer terdorong ke bawah -->
         <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 w-full">
             {{ $slot }}
         </main>
