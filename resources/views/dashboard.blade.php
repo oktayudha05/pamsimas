@@ -239,7 +239,6 @@
                 </div>
             </div>
         </div>
-
         {{-- ===== ROW 5: WELCOME + INFO PERIODE ===== --}}
     </div>
 
