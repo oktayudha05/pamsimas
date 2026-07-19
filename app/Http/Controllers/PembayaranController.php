@@ -25,7 +25,7 @@ class PembayaranController extends Controller
                 ->first();
 
             if ($warga->pencatatan) {
-                $tarif = Pembayaran::getTarifAktif($warga->dusun);
+                $tarif = \App\Models\Pembayaran::getTarifAktif($warga->dusun);
                 
                 $hargaMeter = $tarif ? $tarif->harga_per_meter : 0;
                 $danaMeter = $tarif ? $tarif->dana_meter : 0;
@@ -36,7 +36,13 @@ class PembayaranController extends Controller
                 $warga->pencatatan->pemakaian_detail = $pemakaian;
                 $warga->pencatatan->tagihan_bulan_ini = ($pemakaian * $hargaMeter) + $danaMeter;
 
-                $warga->pencatatan->saldo_awal = $warga->pencatatan_lalu ? $warga->pencatatan_lalu->titip : 0;
+                // ✅ PERBAIKAN LOGIKA SALDO AWAL
+                $saldoAwal = 0;
+                if ($warga->pencatatan_lalu) {
+                    $saldoAwal = $warga->pencatatan_lalu->titip;
+                }
+
+                $warga->pencatatan->saldo_awal = $saldoAwal;
                 $warga->pencatatan->total_harus_dibayar = $warga->pencatatan->tagihan_bulan_ini + $warga->pencatatan->saldo_awal;
             }
         }

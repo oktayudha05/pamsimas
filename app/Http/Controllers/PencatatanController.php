@@ -52,7 +52,6 @@ class PencatatanController extends Controller
         $bulan = $request->bulan;
         $angkaMeteran = $request->angka_meteran;
 
-        // Anti-double input validation
         $exists = Pencatatan::where('warga_id', $wargaId)
             ->where('bulan', $bulan)
             ->exists();
@@ -61,14 +60,13 @@ class PencatatanController extends Controller
             return back()->withErrors(['pencatatan' => 'Data pencatatan warga ini untuk bulan ' . $bulan . ' sudah diinput.']);
         }
 
-        // Fetch latest recording before selected month
         $pencatatanLalu = Pencatatan::where('warga_id', $wargaId)
             ->where('bulan', '<', $bulan)
             ->orderBy('bulan', 'desc')
             ->first();
 
         $angkaLalu = $pencatatanLalu ? $pencatatanLalu->angka_meteran : 0;
-
+        
         if ($angkaMeteran < $angkaLalu) {
             return back()->withErrors([
                 'angka_meteran' => "Angka meteran baru ($angkaMeteran) tidak boleh lebih kecil dari angka meteran sebelumnya ($angkaLalu)."
@@ -76,6 +74,19 @@ class PencatatanController extends Controller
         }
 
         $pemakaian = $angkaMeteran - $angkaLalu;
+        
+        // ✅ PERBAIKAN: Hitung tagihan dan titip langsung saat input
+        $warga = Warga::find($wargaId);
+        
+        // Gunakan model Pembayaran (atau Keuangan jika nama model lo adalah Keuangan)
+        $tarif = \App\Models\Pembayaran::getTarifAktif($warga->dusun); 
+        
+        $hargaMeter = $tarif ? $tarif->harga_per_meter : 0;
+        $danaMeter = $tarif ? $tarif->dana_meter : 0;
+        $tagihanBulanIni = ($pemakaian * $hargaMeter) + $danaMeter;
+        
+        $saldoAwal = $pencatatanLalu ? $pencatatanLalu->titip : 0;
+        $totalHarusDibayar = $tagihanBulanIni + $saldoAwal;
 
         Pencatatan::create([
             'warga_id' => $wargaId,
@@ -83,6 +94,8 @@ class PencatatanController extends Controller
             'angka_meteran' => $angkaMeteran,
             'pemakaian' => $pemakaian,
             'user_id' => Auth::id(),
+            'dibayar' => 0,
+            'titip' => $totalHarusDibayar, // ✅ INI KUNCINYA! Langsung simpan total tunggakan
         ]);
 
         return redirect()->route('pencatatans.index', ['bulan' => $bulan])

@@ -149,10 +149,10 @@ class RekapController extends Controller
             $sheet->setCellValue("D{$rowNumber}", $meterAwal);
             $sheet->setCellValue("E{$rowNumber}", $pencatatan ? $meterAkhir : '-');
             $sheet->setCellValue("F{$rowNumber}", $pemakaian);
-            $sheet->setCellValue("G{$rowNumber}", $tarifPerMeter);
-            $sheet->setCellValue("H{$rowNumber}", $danaMeter);
-            $sheet->setCellValue("I{$rowNumber}", $hargaAir);
-            $sheet->setCellValue("J{$rowNumber}", $tagihanBulanIni);
+            $sheet->setCellValue("G{$rowNumber}", 'Rp ' . number_format($tarifPerMeter, 0, ',', '.'));
+            $sheet->setCellValue("H{$rowNumber}", 'Rp ' . number_format($danaMeter, 0, ',', '.'));
+            $sheet->setCellValue("I{$rowNumber}", 'Rp ' . number_format($hargaAir, 0, ',', '.'));
+            $sheet->setCellValue("J{$rowNumber}", 'Rp ' . number_format($tagihanBulanIni, 0, ',', '.'));
             
             $sheet->setCellValue("K{$rowNumber}", 'Rp ' . number_format(abs($titipLama), 0, ',', '.'));
             $sheet->setCellValue("L{$rowNumber}", 'Rp ' . number_format($totalTagihanRow, 0, ',', '.'));
