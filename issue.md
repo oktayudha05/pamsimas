@@ -1,170 +1,83 @@
-# Panduan Implementasi Fitur Pencarian (Search)
+# Planning: Fix Dynamic Pricing – Harga Belum Dipakai Sesuai Periode
 
-Dokumen ini berisi panduan untuk menambahkan fitur pencarian (search) pada 4 modul utama: **Daftar Rumah (Warga)**, **Manajemen Akun**, **Pembayaran**, dan **Pencatatan Air**.
+## Deskripsi Masalah
 
----
-
-## 1. Konsep Umum Pencarian
-
-Pencarian dilakukan secara **Server-Side** (melalui query database di Controller) menggunakan parameter `search` dari query string URL (contoh: `?search=budi`). 
-
-Cara kerja:
-- Input pencarian dikirim via form `<form method="GET">`.
-- Controller menerima parameter `$request->query('search')` atau `$request->input('search')`.
-- Controller memfilter data menggunakan query builder `where` atau `when()`.
-- Halaman memunculkan kembali teks pencarian di input box sebagai nilai default (`value="{{ $search }}"`).
-- Menambahkan tombol/tautan "Reset" untuk menghapus pencarian saat ini.
+Pengelola sudah berhasil menyimpan harga baru (misal: mulai berlaku 2026-08), namun tagihan di bulan 2026-08 masih merujuk ke harga lama. Ini terjadi karena **model `Pembayaran.php` belum diperbarui** — method `getTarifAktif` masih menggunakan logika lama yang hanya memeriksa kolom `is_active`, bukan kolom `berlaku_mulai` yang baru ditambahkan.
 
 ---
 
-## 2. Implementasi Backend (Controller)
+## Root Cause
 
-### A. Modul Daftar Rumah (`WargaController.php`)
-Ubah method `index` untuk menerima input pencarian berdasarkan **Nama Warga** atau **Nomor Meteran**:
+Di file `app/Models/Pembayaran.php`, method `getTarifAktif` masih seperti ini:
+
 ```php
-public function index(Request $request)
+// LOGIKA LAMA (SALAH)
+public static function getTarifAktif($dusun)
 {
-    $search = $request->query('search');
-
-    $wargas = Warga::when($search, function ($query, $search) {
-            return $query->where('nama', 'like', "%{$search}%")
-                         ->orWhere('nomor_meteran', 'like', "%{$search}%");
-        })
-        ->orderBy('dusun')
-        ->orderBy('rt')
-        ->orderBy('rw')
-        ->orderBy('nama')
-        ->get();
-
-    return view('wargas.index', compact('wargas', 'search'));
+    return self::where('dusun', $dusun)
+               ->where('is_active', true)  // ← tidak mempertimbangkan periode bulan
+               ->first();
 }
 ```
 
-### B. Modul Manajemen Akun (`AkunController.php`)
-Ubah method `index` untuk mencari berdasarkan **Nama** atau **Username**:
-```php
-public function index(Request $request)
-{
-    $search = $request->query('search');
-
-    $akuns = User::when($search, function ($query, $search) {
-            return $query->where('nama', 'like', "%{$search}%")
-                         ->orWhere('username', 'like', "%{$search}%");
-        })
-        ->orderBy('nama')
-        ->get();
-
-    return view('akuns.index', compact('akuns', 'search'));
-}
-```
-
-### C. Modul Pembayaran (`PembayaranController.php`)
-Ubah method `index` untuk mencari warga berdasarkan **Nama** atau **Nomor Meteran**:
-```php
-public function index(Request $request)
-{
-    $bulan = $request->input('bulan', date('Y-m'));
-    $search = $request->input('search');
-
-    $wargas = Warga::when($search, function ($query, $search) {
-            return $query->where('nama', 'like', "%{$search}%")
-                         ->orWhere('nomor_meteran', 'like', "%{$search}%");
-        })
-        ->orderBy('dusun')
-        ->orderBy('rt')
-        ->orderBy('rw')
-        ->get();
-
-    // Loop foreach ($wargas as $warga) tetap dipertahankan seperti semula...
-
-    return view('pembayarans.index', compact('wargas', 'bulan', 'search'));
-}
-```
-
-### D. Modul Pencatatan Air (`PencatatanController.php`)
-Ubah method `index` untuk mencari warga berdasarkan **Nama** atau **Nomor Meteran**:
-```php
-public function index(Request $request)
-{
-    $bulan = $request->input('bulan', date('Y-m'));
-    $search = $request->input('search');
-
-    $wargas = Warga::when($search, function ($query, $search) {
-            return $query->where('nama', 'like', "%{$search}%")
-                         ->orWhere('nomor_meteran', 'like', "%{$search}%");
-        })
-        ->orderBy('rt')
-        ->orderBy('rw')
-        ->orderBy('nama')
-        ->get();
-
-    // Loop foreach ($wargas as $warga) tetap dipertahankan seperti semula...
-
-    return view('pencatatans.index', compact('wargas', 'bulan', 'search'));
-}
-```
+Meskipun semua controller sudah memanggil `getTarifAktif($dusun, $bulan)`, parameter `$bulan` **diabaikan** karena signature method tidak pernah diperbarui. Akibatnya selalu mengembalikan tarif pertama dengan `is_active = true` tanpa peduli bulannya.
 
 ---
 
-## 3. Implementasi Frontend (Blade Views)
+## Daftar File yang Terpengaruh
 
-Setiap halaman index untuk masing-masing modul perlu memiliki komponen pencarian. Agar ramah perangkat mobile dan desktop:
-- **Desktop**: Input pencarian diletakkan sejajar di samping kanan/kiri tombol aksi lainnya.
-- **Mobile**: Input pencarian mengambil lebar penuh (`w-full`) di bawah judul atau di baris baru agar tidak memakan ruang horizontal.
+Semua file berikut sudah memanggil `getTarifAktif($dusun, $bulan)` dengan benar, tapi hasilnya salah karena modelnya belum mendukung filter bulan:
 
-### Template Komponen Form Pencarian (Tailwind CSS)
-Gunakan potongan kode berikut di dalam layout Blade (contoh untuk `wargas/index.blade.php`, `akuns/index.blade.php`, `pembayarans/index.blade.php`, dan `pencatatans/index.blade.php`):
+| File | Method | Keterangan |
+|---|---|---|
+| `app/Models/Pembayaran.php` | `getTarifAktif` | **Sumber masalah** – perlu diperbarui |
+| `app/Http/Controllers/PembayaranController.php` | `index`, `update` | Tampilan tagihan & simpan pembayaran |
+| `app/Http/Controllers/PencatatanController.php` | `store` | Saat pencatat input meteran, tarif langsung dihitung |
+| `app/Http/Controllers/RekapController.php` | `index`, `exportExcel` | Laporan rekap bulanan & ekspor Excel |
 
-```html
-<!-- Form Pencarian (Desktop & Mobile Responsive) -->
-<form method="GET" action="{{ url()->current() }}" class="w-full md:w-80">
-    <!-- Mempertahankan parameter filter lain (seperti bulan) jika ada -->
-    @if(request()->has('bulan'))
-        <input type="hidden" name="bulan" value="{{ request('bulan') }}">
-    @endif
+Semua controller tidak perlu diubah. Cukup perbaiki model saja.
 
-    <div class="relative flex items-center">
-        <!-- Input Text -->
-        <input type="text" 
-               name="search" 
-               value="{{ $search ?? '' }}" 
-               placeholder="Cari nama atau no. meteran..." 
-               class="w-full px-4 py-2 pr-10 text-sm bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#36656B] focus:border-transparent transition">
-        
-        <!-- Tombol submit / Icon cari -->
-        <button type="submit" class="absolute right-3 text-gray-400 hover:text-[#36656B]">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-            </svg>
-        </button>
+---
 
-        <!-- Tombol Reset (Hanya muncul jika sedang mencari) -->
-        @if(!empty($search))
-            <a href="{{ url()->current() }}{{ request()->has('bulan') ? '?bulan='.request('bulan') : '' }}" 
-               class="absolute right-10 text-xs text-red-500 hover:underline mr-1">
-                Reset
-            </a>
-        @endif
-    </div>
-</form>
+## Yang Perlu Diperbaiki
+
+### 1. Perbarui `app/Models/Pembayaran.php`
+
+Tambahkan `berlaku_mulai` ke `fillable`, lalu ubah method `getTarifAktif` agar memfilter berdasarkan periode:
+
+```php
+protected $fillable = [
+    'dusun',
+    'harga_per_meter',
+    'dana_meter',
+    'berlaku_mulai',    // ← tambahkan ini jika belum ada
+    'is_active',
+];
+
+// LOGIKA BARU (BENAR)
+public static function getTarifAktif($dusun, $bulan = null)
+{
+    if (!$bulan) {
+        $bulan = date('Y-m');
+    }
+
+    // Ambil tarif terbaru yang sudah berlaku pada atau sebelum bulan yang ditentukan
+    return self::where('dusun', $dusun)
+               ->where('berlaku_mulai', '<=', $bulan)
+               ->orderBy('berlaku_mulai', 'desc')
+               ->first();
+}
 ```
 
-### Penempatan Layout pada Masing-Masing Halaman
+Logika: "Ambil tarif terbaru yang sudah berlaku pada atau sebelum bulan yang ditentukan".
 
-1. **Daftar Rumah (`wargas/index.blade.php`)**
-   - Letakkan di bagian atas tabel data warga.
-   - Pada desktop: Gabungkan dengan tombol "Tambah Warga".
-   - Pada mobile: Form pencarian bertumpuk secara vertikal di atas tabel data warga.
+**Catatan:** Controller tidak perlu diubah karena sudah memanggil `getTarifAktif($dusun, $bulan)` dengan benar di semua tempat.
 
-2. **Manajemen Akun (`akuns/index.blade.php`)**
-   - Letakkan di bagian header modul manajemen akun.
-   - Pada desktop: Sejajar dengan tombol "Tambah Akun".
-   - Pada mobile: Berada di atas daftar akun.
+---
 
-3. **Pembayaran (`pembayarans/index.blade.php`)**
-   - Gabungkan dengan form filter bulan.
-   - Pastikan tag `<form>` menyertakan input tersembunyi (hidden input) untuk `bulan` agar filter bulan tidak hilang ketika menekan tombol cari, begitupun sebaliknya.
+## Verifikasi Setelah Perbaikan
 
-4. **Pencatatan Air (`pencatatans/index.blade.php`)**
-   - Gabungkan dengan form filter bulan.
-   - Tambahkan input pencarian sehingga petugas pencatat air bisa dengan cepat memfilter nama warga tertentu yang meteran airnya ingin diinput.
+1. Buka halaman **Pembayaran**, pilih periode bulan sebelum tarif baru ditambahkan → harus menggunakan harga lama.
+2. Pilih periode bulan mulai berlakunya tarif baru → harus menggunakan harga baru.
+3. Buka halaman **Rekap Laporan** (tampilan tabel & unduh Excel) untuk bulan yang sama → angka tarif, tagihan, dan total harus sesuai dengan tarif baru.
+4. Input pencatatan meteran baru untuk warga di bulan berlakunya tarif baru → titip/tagihan yang tersimpan di database harus menggunakan harga baru.

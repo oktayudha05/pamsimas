@@ -46,7 +46,7 @@ class RekapController extends Controller
             $totalPemakaian += $warga->pemakaian;
 
             // 4. Rincian Tarif (Dinamis dari Model Keuangan)
-            $tarif = Pembayaran::getTarifAktif($warga->dusun);
+            $tarif = Pembayaran::getTarifAktif($warga->dusun, $bulan);
             $warga->tarif_per_meter = $tarif ? $tarif->harga_per_meter : 0;
             $warga->dana_meter = $tarif ? $tarif->dana_meter : 0;
 
@@ -124,7 +124,7 @@ class RekapController extends Controller
             $meterAkhir = $pencatatan ? $pencatatan->angka_meteran : 0;
             $pemakaian = $pencatatan ? $pencatatan->pemakaian : 0;
             
-            $tarif = Pembayaran::getTarifAktif($warga->dusun);
+            $tarif = Pembayaran::getTarifAktif($warga->dusun, $bulan);
             $tarifPerMeter = $tarif ? $tarif->harga_per_meter : 0;
             $danaMeter = $tarif ? $tarif->dana_meter : 0;
 

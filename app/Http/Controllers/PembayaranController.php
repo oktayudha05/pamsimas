@@ -14,6 +14,8 @@ class PembayaranController extends Controller
         $bulan = $request->input('bulan', date('Y-m'));
         $search = $request->input('search');
 
+        $riwayatTarif = Pembayaran::orderBy('berlaku_mulai', 'desc')->get();
+
         $wargas = Warga::when($search, function ($query, $search) {
                 return $query->where('nama', 'like', "%{$search}%")
                     ->orWhere('nomor_meteran', 'like', "%{$search}%");
@@ -34,7 +36,7 @@ class PembayaranController extends Controller
                 ->first();
 
             if ($warga->pencatatan) {
-                $tarif = \App\Models\Pembayaran::getTarifAktif($warga->dusun);
+                $tarif = \App\Models\Pembayaran::getTarifAktif($warga->dusun, $bulan);
                 
                 $hargaMeter = $tarif ? $tarif->harga_per_meter : 0;
                 $danaMeter = $tarif ? $tarif->dana_meter : 0;
@@ -56,7 +58,7 @@ class PembayaranController extends Controller
             }
         }
 
-        return view('pembayarans.index', compact('wargas', 'bulan'));
+        return view('pembayarans.index', compact('wargas', 'bulan', 'search', 'riwayatTarif'));
     }
 
     public function update(Request $request, $id)
@@ -67,7 +69,7 @@ class PembayaranController extends Controller
 
         $pencatatan = Pencatatan::with('warga')->findOrFail($id);
         
-        $tarif = Pembayaran::getTarifAktif($pencatatan->warga->dusun);
+        $tarif = Pembayaran::getTarifAktif($pencatatan->warga->dusun, $pencatatan->bulan);
         $hargaMeter = $tarif ? $tarif->harga_per_meter : 0;
         $danaMeter = $tarif ? $tarif->dana_meter : 0;
         $tagihanBulanIni = ($pencatatan->pemakaian * $hargaMeter) + $danaMeter;
@@ -91,5 +93,30 @@ class PembayaranController extends Controller
 
         return redirect()->route('pembayaran.index', ['bulan' => $pencatatan->bulan])
             ->with('success', 'Pembayaran berhasil dicatat. Sisa saldo: Rp ' . number_format($sisaSaldo, 0, ',', '.'));
+    }
+
+    public function updateTarif(Request $request)
+    {
+        $request->validate([
+            'dusun' => 'required|in:sragan,luar_sragan',
+            'harga_per_meter' => 'required|integer|min:0',
+            'dana_meter' => 'required|integer|min:0',
+            'berlaku_mulai' => 'required|date_format:Y-m',
+        ]);
+
+        Pembayaran::updateOrCreate(
+            [
+                'dusun' => $request->dusun,
+                'berlaku_mulai' => $request->berlaku_mulai,
+            ],
+            [
+                'harga_per_meter' => $request->harga_per_meter,
+                'dana_meter' => $request->dana_meter,
+                'is_active' => true,
+            ]
+        );
+
+        return redirect()->route('pembayaran.index', ['bulan' => $request->berlaku_mulai])
+            ->with('success', 'Tarif baru berhasil disimpan dan akan mulai berlaku pada periode ' . $request->berlaku_mulai);
     }
 }

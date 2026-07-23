@@ -56,6 +56,7 @@ Route::middleware(['auth', 'role:pengelola'])->group(function () {
     
     Route::get('rekap/excel', [RekapController::class, 'exportExcel'])->name('rekap.excel');
     Route::get('rekap', [RekapController::class, 'index'])->name('rekap.index');
+    Route::post('pembayaran/tarif', [PembayaranController::class, 'updateTarif'])->name('pembayaran.update-tarif');
 });
 
 Route::middleware(['auth', 'role:pengelola,petugas'])->group(function () {

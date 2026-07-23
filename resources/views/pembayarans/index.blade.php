@@ -43,6 +43,80 @@
             </div>
         @endif
 
+        @if(Auth::user()->role === 'pengelola')
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 no-print">
+            <!-- Panel Form Edit Tarif -->
+            <div class="bg-white rounded-2xl p-6 border border-[#DAD887]/50 shadow-sm h-fit">
+                <h3 class="text-md font-bold text-[#36656B] mb-4">Pengaturan Tarif Air Baru</h3>
+                
+                <form action="{{ route('pembayaran.update-tarif') }}" method="POST" class="space-y-4">
+                    @csrf
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Dusun</label>
+                        <select name="dusun" required class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#36656B]">
+                            <option value="sragan">Dusun Sragan</option>
+                            <option value="luar_sragan">Luar Dusun Sragan</option>
+                        </select>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Harga /m³</label>
+                            <input type="number" name="harga_per_meter" required min="0" placeholder="Contoh: 500" class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#36656B]">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Dana Meter</label>
+                            <input type="number" name="dana_meter" required min="0" placeholder="Contoh: 3000" class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#36656B]">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Mulai Berlaku Pada Periode</label>
+                        <input type="month" name="berlaku_mulai" required class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#36656B]">
+                        <span class="text-[10px] text-gray-400 mt-1 block">* Tarif baru akan diterapkan otomatis mulai dari periode bulan ini ke depan.</span>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-[#36656B] hover:bg-[#2a4f54] text-white font-semibold py-2.5 px-4 rounded-xl text-xs transition duration-150 shadow-sm">
+                        Simpan & Atur Tarif
+                    </button>
+                </form>
+            </div>
+
+            <!-- Panel Riwayat Tarif Aktif & Mendatang -->
+            <div class="lg:col-span-2 bg-white rounded-2xl p-6 border border-[#DAD887]/50 shadow-sm overflow-hidden flex flex-col h-[320px]">
+                <h3 class="text-md font-bold text-[#36656B] mb-4">Riwayat Pengaturan Tarif</h3>
+                <div class="overflow-y-auto flex-1 rounded-xl border border-[#DAD887]/30">
+                    <table class="w-full text-xs text-left">
+                        <thead class="bg-[#36656B] text-white text-[10px] uppercase tracking-wider sticky top-0">
+                            <tr>
+                                <th class="px-4 py-3">Dusun</th>
+                                <th class="px-4 py-3 text-right">Harga/m³</th>
+                                <th class="px-4 py-3 text-right">Dana Meter</th>
+                                <th class="px-4 py-3 text-center">Mulai Berlaku</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-[#DAD887]/30">
+                            @forelse($riwayatTarif as $tarif)
+                                <tr class="hover:bg-[#F0F8A4]/10 transition-colors">
+                                    <td class="px-4 py-3 font-medium capitalize text-gray-900">
+                                        {{ str_replace('_', ' ', $tarif->dusun) }}
+                                    </td>
+                                    <td class="px-4 py-3 text-right font-mono text-gray-700">Rp {{ number_format($tarif->harga_per_meter, 0, ',', '.') }}</td>
+                                    <td class="px-4 py-3 text-right font-mono text-gray-700">Rp {{ number_format($tarif->dana_meter, 0, ',', '.') }}</td>
+                                    <td class="px-4 py-3 text-center font-bold text-[#36656B]">{{ $tarif->berlaku_mulai }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="px-4 py-4 text-center text-gray-400">Belum ada riwayat tarif.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        @endif
+
         {{-- Desktop Table --}}
         <div class="bg-white rounded-2xl p-6 border border-[#DAD887]/50 shadow-sm">
             <h2 class="text-lg font-bold text-[#36656B] mb-4">Pembayaran Bulanan</h2>
@@ -171,9 +245,9 @@
                                                 </div>
 
                                                 <div class="flex justify-between pt-2">
-                                                    <span class="text-gray-600">Saldo Bulan Lalu:</span>
+                                                    <span class="text-gray-600">Hutang/Titip Bulan Lalu:</span>
                                                     <span class="font-mono {{ $saldoAwal > 0 ? 'text-red-500' : 'text-[#75B06F]' }}">
-                                                        Rp {{ number_format(abs($saldoAwal)) }} {{ $saldoAwal < 0 ? '(Kredit)' : '' }}
+                                                        Rp {{ number_format(abs($saldoAwal)) }} {{ $saldoAwal < 0 ? '' : '' }}
                                                     </span>
                                                 </div>
                                                 <div class="border-t border-[#DAD887] pt-2 flex justify-between text-base">
@@ -257,7 +331,7 @@
                             <span class="font-mono">{{ number_format($pemakaian) }} m³</span>
                             @if($saldoAwal != 0)
                                 <span class="text-gray-300">•</span>
-                                <span>Saldo: <span class="font-mono font-semibold {{ $saldoAwal > 0 ? 'text-red-500' : 'text-[#75B06F]' }}">Rp {{ number_format(abs($saldoAwal), 0, ',', '.') }}</span></span>
+                                <span>Hutang/Titip: <span class="font-mono font-semibold {{ $saldoAwal > 0 ? 'text-red-500' : 'text-[#75B06F]' }}">Rp {{ number_format(abs($saldoAwal), 0, ',', '.') }}</span></span>
                             @endif
                         </div>
 
@@ -327,9 +401,9 @@
                                 </div>
 
                                 <div class="flex justify-between pt-2">
-                                    <span class="text-gray-600">Saldo Bulan Lalu:</span>
+                                    <span class="text-gray-600">Hutang/Titip Bulan Lalu:</span>
                                     <span class="font-mono {{ $saldoAwal > 0 ? 'text-red-500' : 'text-[#75B06F]' }}">
-                                        Rp {{ number_format(abs($saldoAwal)) }} {{ $saldoAwal < 0 ? '(Kredit)' : '' }}
+                                        Rp {{ number_format(abs($saldoAwal)) }} {{ $saldoAwal < 0 ? '' : '' }}
                                     </span>
                                 </div>
                                 <div class="border-t border-[#DAD887] pt-2 flex justify-between text-base">

@@ -84,7 +84,7 @@ class PencatatanController extends Controller
         $warga = Warga::find($wargaId);
         
         // Gunakan model Pembayaran (atau Keuangan jika nama model lo adalah Keuangan)
-        $tarif = \App\Models\Pembayaran::getTarifAktif($warga->dusun); 
+        $tarif = \App\Models\Pembayaran::getTarifAktif($warga->dusun, $bulan); 
         
         $hargaMeter = $tarif ? $tarif->harga_per_meter : 0;
         $danaMeter = $tarif ? $tarif->dana_meter : 0;
