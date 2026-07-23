@@ -10,10 +10,18 @@ use Illuminate\Validation\Rules\Password;
 
 class AkunController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $akuns = User::orderBy('nama')->get();
-        return view('akuns.index', compact('akuns'));
+        $search = $request->query('search');
+
+        $akuns = User::when($search, function ($query, $search) {
+                return $query->where('nama', 'like', "%{$search}%")
+                    ->orWhere('username', 'like', "%{$search}%");
+            })
+            ->orderBy('nama')
+            ->get();
+
+        return view('akuns.index', compact('akuns', 'search'));
     }
 
     public function create()

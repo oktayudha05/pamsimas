@@ -10,15 +10,21 @@ class WargaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $wargas = Warga::orderBy('dusun')
+        $search = $request->query('search');
+
+        $wargas = Warga::when($search, function ($query, $search) {
+                return $query->where('nama', 'like', "%{$search}%")
+                    ->orWhere('nomor_meteran', 'like', "%{$search}%");
+            })
+            ->orderBy('dusun')
             ->orderBy('rt')
             ->orderBy('rw')
             ->orderBy('nama')
             ->get();
 
-        return view('wargas.index', compact('wargas'));
+        return view('wargas.index', compact('wargas', 'search'));
     }
 
     /**

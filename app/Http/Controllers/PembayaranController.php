@@ -12,7 +12,16 @@ class PembayaranController extends Controller
     public function index(Request $request)
     {
         $bulan = $request->input('bulan', date('Y-m'));
-        $wargas = Warga::orderBy('dusun')->orderBy('rt')->orderBy('rw')->get();
+        $search = $request->input('search');
+
+        $wargas = Warga::when($search, function ($query, $search) {
+                return $query->where('nama', 'like', "%{$search}%")
+                    ->orWhere('nomor_meteran', 'like', "%{$search}%");
+            })
+            ->orderBy('dusun')
+            ->orderBy('rt')
+            ->orderBy('rw')
+            ->get();
 
         foreach ($wargas as $warga) {
             $warga->pencatatan = Pencatatan::where('warga_id', $warga->id)

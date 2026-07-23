@@ -15,8 +15,13 @@ class PencatatanController extends Controller
     public function index(Request $request)
     {
         $bulan = $request->input('bulan', date('Y-m'));
+        $search = $request->input('search');
 
-        $wargas = Warga::orderBy('rt')
+        $wargas = Warga::when($search, function ($query, $search) {
+                return $query->where('nama', 'like', "%{$search}%")
+                    ->orWhere('nomor_meteran', 'like', "%{$search}%");
+            })
+            ->orderBy('rt')
             ->orderBy('rw')
             ->orderBy('nama')
             ->get();
@@ -34,7 +39,7 @@ class PencatatanController extends Controller
                 ->first();
         }
 
-        return view('pencatatans.index', compact('wargas', 'bulan'));
+        return view('pencatatans.index', compact('wargas', 'bulan', 'search'));
     }
 
     /**
