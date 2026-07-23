@@ -27,7 +27,7 @@
                     </div>
                     <div>
                         <h1 class="text-lg font-bold text-[#36656B] leading-tight">TIRTA ANUGERAH</h1>
-                        <p class="text-[10px] text-gray-500 font-medium tracking-wide">PAMSIMAS DESA MENGGORO</p>
+                        <p class="text-[10px] text-gray-500 font-medium tracking-wide">PSAB Dusun Sragan</p>
                     </div>
                 </div>
 
