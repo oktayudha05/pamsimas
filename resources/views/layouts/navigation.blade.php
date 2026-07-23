@@ -5,11 +5,9 @@
             <!-- Logo + Nav Links -->
             <div class="flex items-center gap-8">
                 <!-- Logo -->
-                <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
-                    <div class="w-8 h-8 bg-[#DAD887] rounded-lg flex items-center justify-center">
-                        <svg class="w-5 h-5 text-[#36656B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                        </svg>
+                <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5">
+                    <div class="w-6 h-6 bg-white rounded-xl p-1 flex items-center justify-center shadow-sm shrink-0">
+                        <img src="{{ asset('logoo.png') }}" alt="Logo" class="w-full h-full object-contain">
                     </div>
                     <span class="text-white font-bold text-lg tracking-tight">TIRTA ANUGERAH</span>
                 </a>

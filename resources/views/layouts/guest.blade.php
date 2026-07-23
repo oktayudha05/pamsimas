@@ -23,10 +23,8 @@
             <div class="bg-[#36656B] rounded-2xl p-6 md:p-10 flex flex-col justify-between">
                 <div>
                     <div class="flex items-center gap-3 md:block">
-                        <div class="w-11 h-11 md:w-14 md:h-14 bg-[#DAD887] rounded-xl flex items-center justify-center shrink-0 md:mb-8">
-                            <svg class="w-6 h-6 md:w-8 md:h-8 text-[#36656B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                            </svg>
+                        <div class="w-12 h-12 md:w-16 md:h-16 bg-white rounded-2xl p-2 flex items-center justify-center shrink-0 md:mb-6 shadow-md">
+                            <img src="{{ asset('logoo.png') }}" alt="Logo" class="w-full h-full object-contain">
                         </div>
                         <h1 class="text-2xl md:text-3xl font-bold text-white md:mb-3">TIRTA ANUGERAH</h1>
                     </div>

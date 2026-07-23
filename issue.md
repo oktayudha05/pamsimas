@@ -814,3 +814,339 @@ Setelah mengubah file:
 5. **Ukur target sentuh**:
    - Tombol minimal 44x44px (atau 48x48px lebih baik)
    - Cek dengan inspect element → lihat computed size
+
+---
+
+# 🔍 Issue: Fitur Pencarian (Search) di 4 Halaman Utama (Daftar Rumah, Manajemen Akun, Pembayaran, Pencatatan Air)
+
+## Latar Belakang
+
+Saat ini, daftar warga, akun, pencatatan air, dan pembayaran menampilkan seluruh data sekaligus (atau filter per bulan saja). Ketika data warga semakin banyak, petugas dan pengelola membutuhkan pencarian cepat berdasarkan nama, nomor meteran, atau username.
+
+Tujuan issue ini: **Menambahkan fitur pencarian (search bar)** pada 4 halaman utama:
+1. **Daftar Rumah** (`wargas/index.blade.php` & `WargaController.php`)
+2. **Manajemen Akun** (`akuns/index.blade.php` & `AkunController.php`)
+3. **Pembayaran** (`pembayarans/index.blade.php` & `PembayaranController.php`)
+4. **Pencatatan Air** (`pencatatans/index.blade.php` & `PencatatanController.php`)
+
+Dua versi tampilan harus disediakan:
+- **Desktop (Layar Besar):** Search input terletak inline / sejajar dengan filter/tombol lain.
+- **Mobile (Layar HP):** Search input memiliki lebar 100% (`w-full`) di bagian paling atas agar mudah digunakan dengan satu tangan di layar HP.
+
+---
+
+## 📋 Modul 1: Fitur Search di Daftar Rumah
+
+### 1. Ubah Backend (`app/Http/Controllers/WargaController.php`)
+
+**Metode:** `index(Request $request)`
+
+**Deskripsi Logika:**
+- Tangkap input `search` dari `$request->input('search')`.
+- Tambahkan klausul `when($search, ...)` pada query Eloquent.
+- Filter berdasarkan kolom: `nama`, `nomor_meteran`, atau `dusun`.
+- Pass variabel `$search` ke Blade view agar nilai input tidak hilang saat halaman di-refresh.
+
+**Contoh Kode Controller:**
+```php
+public function index(Request $request)
+{
+    $search = $request->input('search');
+
+    $wargas = Warga::query()
+        ->when($search, function ($query, $search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
+                  ->orWhere('nomor_meteran', 'like', "%{$search}%")
+                  ->orWhere('dusun', 'like', "%{$search}%");
+            });
+        })
+        ->orderBy('dusun')
+        ->orderBy('rt')
+        ->orderBy('rw')
+        ->orderBy('nama')
+        ->get();
+
+    return view('wargas.index', compact('wargas', 'search'));
+}
+```
+
+---
+
+### 2. Ubah Frontend (`resources/views/wargas/index.blade.php`)
+
+**Letak:** Di atas tabel & card list (di dalam blok Daftar Rumah).
+
+**Contoh Kode Blade UI (Desktop & Mobile Responsive):**
+```html
+<!-- Form Pencarian (Desktop & Mobile) -->
+<form method="GET" action="{{ route('wargas.index') }}" class="mb-4">
+    <div class="flex flex-col sm:flex-row items-center gap-2">
+        <div class="relative w-full sm:w-72">
+            <input type="text" name="search" value="{{ $search ?? '' }}" 
+                   placeholder="Cari nama, no meteran, dusun..." 
+                   class="w-full pl-9 pr-8 py-2.5 bg-[#F0F8A4]/30 border border-[#DAD887] text-gray-800 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-[#36656B]">
+            <!-- Ikon Kaca Pembesar -->
+            <svg class="w-4 h-4 text-gray-400 absolute left-3 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <!-- Tombol Reset / Hapus Pencarian -->
+            @if(request('search'))
+                <a href="{{ route('wargas.index') }}" class="absolute right-2.5 top-3 text-gray-400 hover:text-red-500">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </a>
+            @endif
+        </div>
+        <button type="submit" class="w-full sm:w-auto bg-[#36656B] hover:bg-[#2a4f54] text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition shadow-sm">
+            Cari
+        </button>
+    </div>
+</form>
+```
+
+---
+
+## 📋 Modul 2: Fitur Search di Manajemen Akun
+
+### 1. Ubah Backend (`app/Http/Controllers/AkunController.php`)
+
+**Metode:** `index(Request $request)`
+
+**Deskripsi Logika:**
+- Tangkap `$request->input('search')`.
+- Filter model `User` pada kolom `nama`, `username`, dan `role`.
+
+**Contoh Kode Controller:**
+```php
+public function index(Request $request)
+{
+    $search = $request->input('search');
+
+    $akuns = User::query()
+        ->when($search, function ($query, $search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
+                  ->orWhere('username', 'like', "%{$search}%")
+                  ->orWhere('role', 'like', "%{$search}%");
+            });
+        })
+        ->orderBy('nama')
+        ->get();
+
+    return view('akuns.index', compact('akuns', 'search'));
+}
+```
+
+---
+
+### 2. Ubah Frontend (`resources/views/akuns/index.blade.php`)
+
+**Letak:** Di bagian atas tabel/kartu manajemen akun.
+
+**Contoh Kode Blade UI:**
+```html
+<form method="GET" action="{{ route('akuns.index') }}" class="mb-4">
+    <div class="flex flex-col sm:flex-row items-center gap-2">
+        <div class="relative w-full sm:w-72">
+            <input type="text" name="search" value="{{ $search ?? '' }}" 
+                   placeholder="Cari nama, username, role..." 
+                   class="w-full pl-9 pr-8 py-2.5 bg-[#F0F8A4]/30 border border-[#DAD887] text-gray-800 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-[#36656B]">
+            <svg class="w-4 h-4 text-gray-400 absolute left-3 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            @if(request('search'))
+                <a href="{{ route('akuns.index') }}" class="absolute right-2.5 top-3 text-gray-400 hover:text-red-500">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </a>
+            @endif
+        </div>
+        <button type="submit" class="w-full sm:w-auto bg-[#36656B] hover:bg-[#2a4f54] text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition shadow-sm">
+            Cari
+        </button>
+    </div>
+</form>
+```
+
+---
+
+## 📋 Modul 3: Fitur Search di Pembayaran Air
+
+### 1. Ubah Backend (`app/Http/Controllers/PembayaranController.php`)
+
+**Metode:** `index(Request $request)`
+
+**Deskripsi Logika:**
+- Ambil parameter `bulan` (default: bulan berjalan) dan `search`.
+- Terapkan pencarian pada query `Warga` berdasarkan `nama` atau `nomor_meteran`.
+- Pertahankan proses loop penghitungan saldo & pencatatan untuk warga hasil filter.
+- Sertakan `bulan` dan `search` dalam variabel yang dikirim ke view (`compact('wargas', 'bulan', 'search')`).
+
+**Contoh Kode Controller:**
+```php
+public function index(Request $request)
+{
+    $bulan = $request->input('bulan', date('Y-m'));
+    $search = $request->input('search');
+
+    $wargas = Warga::query()
+        ->when($search, function ($query, $search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
+                  ->orWhere('nomor_meteran', 'like', "%{$search}%");
+            });
+        })
+        ->orderBy('dusun')
+        ->orderBy('rt')
+        ->orderBy('rw')
+        ->get();
+
+    foreach ($wargas as $warga) {
+        // ... (logika existing pencatatan & tagihan tidak diubah) ...
+    }
+
+    return view('pembayarans.index', compact('wargas', 'bulan', 'search'));
+}
+```
+
+---
+
+### 2. Ubah Frontend (`resources/views/pembayarans/index.blade.php`)
+
+**Letak:** Di filter bar bagian atas halaman pembayaran.
+
+**Catatan:** Filter Bulan dan Search dibuat dalam 1 `<form>` yang sama agar nilai bulan tidak hilang saat mencari kata kunci.
+
+**Contoh Kode Blade UI:**
+```html
+<form method="GET" action="{{ route('pembayaran.index') }}" class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+    <!-- Filter Bulan -->
+    <input type="month" name="bulan" value="{{ $bulan }}"
+           class="w-full sm:w-auto px-4 py-2 bg-[#F0F8A4]/40 border border-[#DAD887] text-gray-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#36656B]"
+           onchange="this.form.submit()">
+
+    <!-- Input Search -->
+    <div class="relative w-full sm:w-64">
+        <input type="text" name="search" value="{{ $search ?? '' }}" 
+               placeholder="Cari nama / no meteran..." 
+               class="w-full pl-9 pr-8 py-2 bg-[#F0F8A4]/40 border border-[#DAD887] text-gray-800 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-[#36656B]">
+        <svg class="w-4 h-4 text-gray-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        @if(request('search'))
+            <a href="{{ route('pembayaran.index', ['bulan' => $bulan]) }}" class="absolute right-2.5 top-2.5 text-gray-400 hover:text-red-500">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </a>
+        @endif
+    </div>
+
+    <button type="submit" class="w-full sm:w-auto bg-[#36656B] hover:bg-[#2a4f54] text-white text-sm font-semibold px-4 py-2 rounded-xl transition shadow-sm">
+        Cari
+    </button>
+</form>
+```
+
+---
+
+## 📋 Modul 4: Fitur Search di Pencatatan Air
+
+### 1. Ubah Backend (`app/Http/Controllers/PencatatanController.php`)
+
+**Metode:** `index(Request $request)`
+
+**Deskripsi Logika:**
+- Tangkap `bulan` dan `search`.
+- Filter query `Warga` pada nama atau nomor meteran sebelum fetching data meteran bulanan.
+
+**Contoh Kode Controller:**
+```php
+public function index(Request $request)
+{
+    $bulan = $request->input('bulan', date('Y-m'));
+    $search = $request->input('search');
+
+    $wargas = Warga::query()
+        ->when($search, function ($query, $search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
+                  ->orWhere('nomor_meteran', 'like', "%{$search}%");
+            });
+        })
+        ->orderBy('rt')
+        ->orderBy('rw')
+        ->orderBy('nama')
+        ->get();
+
+    foreach ($wargas as $warga) {
+        // ... (logika existing pencatatan_sekarang & pencatatan_lalu) ...
+    }
+
+    return view('pencatatans.index', compact('wargas', 'bulan', 'search'));
+}
+```
+
+---
+
+### 2. Ubah Frontend (`resources/views/pencatatans/index.blade.php`)
+
+**Letak:** Di filter bar bagian atas halaman pencatatan.
+
+**Contoh Kode Blade UI:**
+```html
+<form method="GET" action="{{ route('pencatatans.index') }}" class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+    <!-- Filter Bulan -->
+    <input type="month" name="bulan" value="{{ $bulan }}"
+           class="w-full sm:w-auto px-4 py-2 bg-[#F0F8A4]/40 border border-[#DAD887] text-gray-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#36656B]"
+           onchange="this.form.submit()">
+
+    <!-- Input Search -->
+    <div class="relative w-full sm:w-64">
+        <input type="text" name="search" value="{{ $search ?? '' }}" 
+               placeholder="Cari nama / no meteran..." 
+               class="w-full pl-9 pr-8 py-2 bg-[#F0F8A4]/40 border border-[#DAD887] text-gray-800 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-[#36656B]">
+        <svg class="w-4 h-4 text-gray-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        @if(request('search'))
+            <a href="{{ route('pencatatans.index', ['bulan' => $bulan]) }}" class="absolute right-2.5 top-2.5 text-gray-400 hover:text-red-500">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </a>
+        @endif
+    </div>
+
+    <button type="submit" class="w-full sm:w-auto bg-[#36656B] hover:bg-[#2a4f54] text-white text-sm font-semibold px-4 py-2 rounded-xl transition shadow-sm">
+        Cari
+    </button>
+</form>
+```
+
+---
+
+## 🧪 Checklist Pengujian (Testing)
+
+Sebelum melaporkan pekerjaan selesai, verifikasi poin berikut:
+
+- [ ] **Daftar Rumah (`/wargas`)**:
+  - [ ] Ketik kata kunci (misal: "Budi") lalu tekan Enter / klik Cari → Data terfilter dengan benar.
+  - [ ] Ketik nomor meteran (misal: "MTR-001") → Menampilkan data yang tepat.
+  - [ ] Klik ikon (X) reset → Kata kunci terhapus dan seluruh data tampil kembali.
+  - [ ] Buka DevTools mode HP (375px) → Search bar tampil full width (`w-full`) dan tidak memotong tombol.
+
+- [ ] **Manajemen Akun (`/akuns`)**:
+  - [ ] Ketik username atau role ("pengelola" / "petugas") → Hasil filter sesuai.
+  - [ ] Tombol reset bekerja dengan baik.
+
+- [ ] **Pembayaran (`/pembayaran`)**:
+  - [ ] Pilih bulan tertentu, lalu ketik nama warga → Filter bulan tidak berubah.
+  - [ ] Hasil pencarian dapat langsung ditransaksikan via modal pembayaran.
+
+- [ ] **Pencatatan Air (`/pencatatans`)**:
+  - [ ] Pilih bulan tertentu, lalu ketik nomor meteran → Data tampil sesuai.
+  - [ ] Penginputan angka meteran dari data hasil pencarian (desktop & mobile card) berjalan tanpa error.
